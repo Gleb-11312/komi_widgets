@@ -30,7 +30,6 @@
       <button class="tab-btn" data-tab="as">Assistant</button>
     </div>
 
-    <!-- Translator -->
     <div id="tab-tr" class="card">
       <div class="title">English → Komi Translator (beta)</div>
       <div class="sub">Type a word or a short phrase in English. This translator returns Komi text.</div>
@@ -42,14 +41,13 @@
       <div id="out" class="out"></div>
     </div>
 
-    <!-- Assistant -->
     <div id="tab-as" class="card hidden">
-      <div class="title">Assistant (Pronunciation coach)</div>
-      <div class="sub">Enter an English word/phrase. Assistant plays it; you repeat, and it scores how close you are.</div>
+      <div class="title">Assistant (Speak Komi)</div>
+      <div class="sub">Enter an English word/phrase — we translate to Komi, play it in Komi, then you repeat and get a score.</div>
       <input id="as-text" class="txt" placeholder="Type an English word… e.g. hello" />
       <div class="row" style="margin-top:.6rem">
-        <button id="as-say" class="btn">Play</button>
-        <button id="as-record" class="btn primary">Record & Check</button>
+        <button id="as-say" class="btn">Play Komi</button>
+        <button id="as-record" class="btn primary">Record & Check (ru-RU)</button>
         <span id="as-status" class="badge">idle</span>
       </div>
       <div class="meter"><div id="as-bar" class="bar"></div></div>
@@ -58,55 +56,55 @@
   </div>
 
   <script>
-    // --- Tabs ---
     const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
-    document.querySelectorAll('.tab-btn').forEach(b=>{
-      b.addEventListener('click',()=>{
-        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-        b.classList.add('active');
-        tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
-        tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
-      });
-    });
+    document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
+      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+      b.classList.add('active');
+      tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
+      tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
+    }));
 
-    // --- Translator ---
     const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
     const toks = s => norm(s).split(' ').filter(Boolean);
     function mapLongest(tokens, dict, n=4){
       const out=[], unk=[]; let i=0;
       while(i<tokens.length){
-        let hit=null, k=0;
+        let hit=null,k=0;
         for(let m=Math.min(n,tokens.length-i); m>=1; m--){
           const p=tokens.slice(i,i+m).join(' ');
-          if(dict[p]!==undefined){ hit=dict[p]; k=m; break; }
+          if(dict[p]!==undefined){hit=dict[p];k=m;break;}
         }
-        if(hit!==null){ out.push(hit); i+=k; }
-        else { out.push({__u:tokens[i]}); unk.push(tokens[i]); i++; }
-      }
-      return {out, unk};
+        if(hit!==null){out.push(hit);i+=k;} else {out.push({__u:tokens[i]});unk.push(tokens[i]);i++;}
+      } return {out,unk};
     }
     const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
     const cmap={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
-    function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs) s=s.replaceAll(a,b); let o=""; for(const ch of s) o+=cmap[ch]??ch; return o; }
-    function finalize(chunks){ const parts=[]; for(const c of chunks){ if(typeof c==='string') parts.push(c); else if(c&&c.__u) parts.push(translit(c.__u)); } return parts.join(' ').replace(/\s+/g,' ').trim(); }
+    function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
+    function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
     const H=id=>document.getElementById(id);
     let DICT=null;
 
-    async function boot(){
-      try{
-        const resp = await fetch('./data/dictionary.json',{cache:'no-store'});
-        DICT = await resp.json();
-        // Авто-расширение: простые формы глаголов и мн. число
-        const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","play","watch","listen","teach","study"];
-        const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-        const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
-        const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
-        verbs.forEach(v=>{["",third(v),past(v),ing(v)].forEach(f=>{ if(f) DICT[f]=DICT[v]||translit(v); }); });
-        const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player"];
-        const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-        nouns.forEach(n=>{ if(DICT[n]) DICT[plural(n)] = DICT[n]; });
-        H('hint').textContent='ready';
-      }catch(e){ H('hint').textContent='dictionary not found'; console.error(e); }
+    async function loadAll(){
+      const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
+      let dict = {...base};
+      // auto-load overlays overlay_1..overlay_5.json if present
+      for(let i=1;i<=5;i++){
+        try{
+          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
+          dict = {...dict, ...ov};
+        }catch(e){/* overlay may be missing, skip */}
+      }
+      // expand forms
+      const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
+      const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+      const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
+      const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
+      verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
+      const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
+      const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+      nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
+      DICT = dict;
+      H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
     }
 
     function translate(){
@@ -118,32 +116,48 @@
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
-    // --- Assistant (Web Speech API) ---
+    // Assistant: speak & rate Komi
+    function toKomi(text){
+      const {out} = mapLongest(toks(text), DICT||{}, 4);
+      return finalize(out);
+    }
     const status = t=> H('as-status').textContent=t;
     const setScore = v=> H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
-    function speak(text){ const u=new SpeechSynthesisUtterance(text); u.lang='en-US'; u.rate=0.95; speechSynthesis.cancel(); speechSynthesis.speak(u); }
-    function dist(a,b){ a=a.toLowerCase(); b=b.toLowerCase(); const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
-      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){ m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1)); } } return m[a.length][b.length]; }
+    function speakKomi(text){
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='ru-RU'; u.rate=0.95;
+      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null;
+      if(pick) u.voice=pick;
+      speechSynthesis.cancel(); speechSynthesis.speak(u);
+    }
+    function dist(a,b){
+      a=a.toLowerCase(); b=b.toLowerCase();
+      const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
+      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){ m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1)); } }
+      return m[a.length][b.length];
+    }
     function scoreRef(rec, ref){ const d=dist(rec,ref); const max=Math.max(ref.length,1); const s=Math.round(100*(1-d/max)); return Math.max(0,Math.min(100,s)); }
 
-    H('as-say').addEventListener('click', ()=>{
-      const t=H('as-text').value.trim(); if(!t) return;
-      speak(t); status('playing…'); setTimeout(()=>status('idle'),800);
+    document.getElementById('as-say').addEventListener('click', ()=>{
+      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
+      const kom = toKomi(en);
+      speakKomi(kom);
+      status('Repeat in Komi: "'+kom+'"');
     });
 
-    H('as-record').addEventListener('click', ()=>{
-      const ref=(H('as-text').value||'').trim(); if(!ref) return;
+    document.getElementById('as-record').addEventListener('click', ()=>{
+      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
+      const target = toKomi(en);
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
       if(!SR){ status('speech recognition not supported'); return; }
-      const rec=new SR(); rec.lang='en-US'; rec.interimResults=false; rec.maxAlternatives=1;
+      const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
       status('listening…'); setScore(0);
-      rec.onresult=(e)=>{ const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,ref); setScore(s); status('score: '+s+' / 100'); H('as-hint').textContent='You said: "'+heard+'"'; };
+      rec.onresult=(e)=>{ const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,target); setScore(s); status('score: '+s+' / 100'); H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"'; };
       rec.onerror =(e)=>{ status('mic error'); console.error(e); };
-      rec.onend   =()=>{ if(H('as-status').textContent==='listening…') status('idle'); };
+      rec.onend   =()=>{ if(document.getElementById('as-status').textContent==='listening…') status('idle'); };
       rec.start();
     });
 
-    boot();
+    loadAll();
   </script>
 </body></html>
-
