@@ -4,33 +4,32 @@
   <title>Komi widgets — Translator · Assistant · Cards</title>
   <style>
     :root{
-      --bg1:#0a1224;--bg2:#0f1b33;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;
-      --accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.18)
+      --bg:#f7fbff; --card:#ffffff; --ink:#0b1230; --muted:#5b6475;
+      --border:#dbe7f4; --shadow:rgba(13,38,76,.08);
+      --accent:#16a34a; --accent2:#0ea5e9;
     }
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh;position:relative;padding-bottom:260px}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
-    .brand{color:#e7f2ff;font-size:28px;margin:0 0 12px;font-weight:900}
-    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem;flex-wrap:wrap}
-    .tab-btn{padding:.58rem 1.05rem;border:1px solid #2b3b56;border-radius:999px;background:#0f1c34;color:#d9e8ff;cursor:pointer}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px 64px}
+    .brand{font-size:28px;font-weight:900;margin:0 0 12px}
+    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabs{display:flex;gap:.5rem;margin:.5rem 0 1rem;flex-wrap:wrap}
+    .tab-btn{padding:.6rem 1rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
     .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
-    .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 16px 40px var(--shadow)}
+    .title{font-size:20px;font-weight:800;margin-bottom:4px}
+    .sub{color:var(--muted);font-size:14px;margin-bottom:12px}
     .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
     .btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
     .btn[disabled]{opacity:.6;cursor:not-allowed}
-    .txt,textarea.txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
+    .txt,textarea.txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border);background:#fff}
     .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
     .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
     .hint{font-size:12px;color:var(--muted)}
     .hidden{display:none}
     .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
     .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
-
     /* Cards */
     .cards-wrap{display:grid;grid-template-columns:1fr;gap:14px}
     .fc{height:220px;border-radius:18px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;
@@ -38,22 +37,10 @@
     .fc.flipped{transform:rotateY(180deg)}
     .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:18px;backface-visibility:hidden;padding:18px}
     .front{background:#ffffff}
-    .back{transform:rotateY(180deg);background:linear-gradient(135deg,#eaf6ff,#f7fbff)}
+    .back{transform:rotateY(180deg);background:linear-gradient(135deg,#eaf6ff,#ffffff)}
     .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .progress{height:8px;border-radius:999px;background:#eef6ff;border:1px solid var(--border);overflow:hidden}
     .progress .pbar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
-
-    /* Aurora + bear footer */
-    .scene{position:fixed;left:0;right:0;bottom:0;height:240px;pointer-events:none}
-    .aurora{position:absolute;inset:0;background:
-      radial-gradient(60% 90% at 10% 30%, rgba(25,231,151,.40), transparent 60%),
-      radial-gradient(50% 80% at 70% 0%, rgba(80,220,255,.35), transparent 60%),
-      radial-gradient(40% 100% at 40% 10%, rgba(80,140,255,.25), transparent 60%);
-      filter:blur(14px) saturate(120%);animation:aur 12s ease-in-out infinite alternate}
-    @keyframes aur{from{transform:translateY(0)}to{transform:translateY(-18px)}}
-    .ground{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(#0b1226,#0b1226) bottom/100% 70px no-repeat}
-    .bear{position:absolute;bottom:60px;left:-220px;width:210px;opacity:.95;animation:bearwalk 20s linear infinite}
-    @keyframes bearwalk{to{transform:translateX(120vw)}}
   </style>
 </head>
 <body>
@@ -129,16 +116,6 @@
     </div>
   </div>
 
-  <!-- Aurora & bear -->
-  <div class="scene" aria-hidden="true">
-    <div class="aurora"></div>
-    <div class="ground"></div>
-    <svg class="bear" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
-      <path fill="#c6d2dd" d="M170 250c20 40 75 60 138 58 96-3 156-64 214-61 32 2 60 24 72 21 11-3 15-19 9-30-4-7-10-12-18-16 9-8 14-17 12-27-3-14-19-23-38-22-18 1-36 9-52 22-12-25-36-58-86-73-63-19-123 1-170 26-21 12-34 8-55-6-12-8-27-14-36-8-9 6-9 18 2 26 16 12 32 13 45 22-31 17-43 43-37 68z"/>
-      <circle cx="510" cy="180" r="6" fill="#0b1230"/>
-    </svg>
-  </div>
-
   <script>
     /* ------------ tabs ------------ */
     const tabs={tr:document.getElementById('tab-tr'),as:document.getElementById('tab-as'),cd:document.getElementById('tab-cd')};
@@ -176,40 +153,58 @@
     let ENRU=null;   // EN->RU мост
     let RUKO=null;   // RU->Komi мост
 
+    /* -------- small fallback so UI works even w/o files -------- */
+    const FALLBACK_DICT={
+      "i":"ме","you":"тэ","we":"ми","hello":"видза оланыд","hi":"чолӧн","good morning":"бур асыва","goodbye":"видзӧд",
+      "cat":"кань","dog":"пон","water":"удж","milk":"эм","bread":"хлеб","house":"кӧрт","home":"кӧрт","city":"гӧрӧд",
+      "eat":"ӧтны","drink":"войны","go":"кӧдзыны","come":"мунӧм","speak":"вежыны","learn":"кытчӧдны","read":"лӧмын","write":"писавны",
+      "love":"джугӧдчыны","want":"вӧвны","know":"видзчыны","sleep":"сонны","work":"орччыны"
+    };
+    const FALLBACK_ENRU={
+      "i":"я","you":"ты","we":"мы","hello":"здравствуйте","hi":"привет","good morning":"доброе утро","goodbye":"до свидания",
+      "cat":"кот","dog":"собака","water":"вода","milk":"молоко","bread":"хлеб","house":"дом","home":"дом","city":"город",
+      "eat":"есть","drink":"пить","go":"идти","come":"приходить","speak":"говорить","learn":"учиться","read":"читать","write":"писать",
+      "love":"любить","want":"хотеть","know":"знать","sleep":"спать","work":"работать"
+    };
+    const FALLBACK_RUKO={
+      "я":"ме","ты":"тэ","мы":"ми","здравствуйте":"видза оланыд","привет":"чолӧн","доброе утро":"бур асыва","до свидания":"видзӧд",
+      "кот":"кань","собака":"пон","вода":"удж","молоко":"эм","хлеб":"хлеб","дом":"кӧрт","город":"гӧрӧд",
+      "есть":"ӧтны","пить":"войны","идти":"кӧдзыны","приходить":"мунӧм","говорить":"вежыны","учиться":"кытчӧдны","читать":"лӧмын","писать":"писавны",
+      "любить":"джугӧдчыны","хотеть":"вӧвны","знать":"видзчыны","спать":"сонны","работать":"орччыны"
+    };
+
     /* -------- dictionary load (base + overlays + bridge) -------- */
     async function loadAll(){
+      let statusNote = '';
       // 1) прямой словарь + overlays
-      const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
-      let dict = {...base};
-      const overlayNames=[...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),'overlay_verbs_1.json','overlay_verbs_2.json'];
-      for(const name of overlayNames){
-        try{
-          const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'});
-          if(res.ok){ Object.assign(dict, await res.json()); }
-        }catch(e){}
+      try{
+        const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
+        let dict = {...base};
+        const overlayNames=[...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),'overlay_verbs_1.json','overlay_verbs_2.json'];
+        for(const name of overlayNames){
+          try{
+            const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'});
+            if(res.ok){ Object.assign(dict, await res.json()); }
+          }catch(e){}
+        }
+        DICT = dict;
+      }catch(e){
+        DICT = {...FALLBACK_DICT};
+        statusNote += ' · fallback direct';
       }
 
-      // немного автоспряжений (только если базовая лемма есть в прямом словаре)
-      const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
-      const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-      const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
-      const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
-      verbs.forEach(v=>{ [v,third(v),past(v),ing(v)].forEach(f=>{ if(f && dict[v]) dict[f]=dict[v]; }); });
-
-      DICT = dict;
-
-      // 2) подгрузим мосты EN->RU и RU->Komi
+      // 2) мосты
       try{ ENRU = await fetch('./data/en_ru.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ ENRU=null; }
       try{ RUKO = await fetch('./data/ru_komi.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ RUKO=null; }
 
-      H('hint').textContent='Ready ('+Object.keys(DICT).length+' direct; bridge '+
-        (ENRU?Object.keys(ENRU).length:0)+'/'+(RUKO?Object.keys(RUKO).length:0)+')';
+      if(!ENRU||!RUKO){ ENRU = ENRU||{...FALLBACK_ENRU}; RUKO = RUKO||{...FALLBACK_RUKO}; statusNote += ' · fallback bridge'; }
+
+      H('hint').textContent='Ready ('+Object.keys(DICT).length+' direct; bridge '+Object.keys(ENRU).length+'/'+Object.keys(RUKO).length+')'+statusNote;
     }
 
     // Пробуем скрытый транзит EN -> RU -> Komi
     function bridgeTranslate(enTokens){
       if(!ENRU || !RUKO) return {text:'', unk:[]};
-
       // шаг 1: EN -> RU
       const ru1 = mapLongest(enTokens, ENRU, 4);
       const ruPieces = [];
@@ -217,7 +212,6 @@
         if(typeof piece==='string'){ ruPieces.push(...toks(piece)); }
         else if(piece && piece.__u){ ruPieces.push(piece.__u); }
       }
-
       // шаг 2: RU -> Komi
       const ko = mapLongest(ruPieces, RUKO, 4);
       const text = finalize(ko.out);
@@ -227,19 +221,17 @@
     /* -------- Translator -------- */
     function translate(){
       if(!DICT){ H('hint').textContent='Dictionary not found'; return; }
-
       const tokens = toks(H('src').value);
 
-      // Вариант А: прямой EN->Komi
+      // прямой EN->Komi
       const directRes = mapLongest(tokens, DICT, 4);
       const directText = finalize(directRes.out);
       const directUnk  = new Set(directRes.unk);
 
-      // Вариант B: скрытый EN->RU->Komi
-      const bridgeRes = bridgeTranslate(tokens);  // {text, unk}
+      // мост EN->RU->Komi
+      const bridgeRes = bridgeTranslate(tokens);
       const bridgeUnk = new Set(bridgeRes.unk||[]);
 
-      // Выбираем лучший вариант
       let bestText, bestUnk;
       if(bridgeUnk.size < directUnk.size || (bridgeUnk.size===directUnk.size && (bridgeRes.text||'').length > (directText||'').length)){
         bestText = bridgeRes.text || directText;
@@ -258,7 +250,6 @@
     /* -------- Assistant -------- */
     function toKomi(text){
       const tokens = toks(text);
-      // берём тот же «лучший вариант», что и в переводчике
       const directRes = mapLongest(tokens, DICT||{}, 4);
       const directText = finalize(directRes.out);
       const bridgeRes = bridgeTranslate(tokens);
@@ -291,12 +282,13 @@
       try{ rec.start(); }catch(err){ status('Mic error: start failed'); H('as-record').disabled=false; }
     });
 
-    /* -------- Cards (Quizlet style) -------- */
+    /* -------- Cards -------- */
     let deck=[], idx=0, known=0;
     const cdFront=H('cd-front'), cdBack=H('cd-back'), cdCard=H('cd-card');
     function allPairs(){
+      const src = DICT || FALLBACK_DICT;
       const out=[];
-      for(const [en,val] of Object.entries(DICT||{})){
+      for(const [en,val] of Object.entries(src)){
         if(typeof val!=='string') continue;
         if(en.split(' ').length>2) continue;
         if(!/^[a-z]/.test(en)) continue;
@@ -318,21 +310,21 @@
       const it = deck[idx];
       cdFront.textContent = it.q; cdBack.textContent = it.a;
       if(resetFlip) cdCard.classList.remove('flipped');
-      H('cd-pbar').style.width = Math.round((idx/deck.length)*100)+'%';
+      document.getElementById('cd-pbar').style.width = Math.round((idx/deck.length)*100)+'%';
     }
-    function updateStat(){ H('cd-stat').textContent = `${idx+1} / ${deck.length} · known: ${known}`; }
+    function updateStat(){ document.getElementById('cd-stat').textContent = `${idx+1} / ${deck.length} · known: ${known}`; }
     function flip(){ cdCard.classList.toggle('flipped'); }
     function next(){ if(!deck.length) return; idx = Math.min(deck.length-1, idx+1); renderCard(true); updateStat(); }
     function prev(){ if(!deck.length) return; idx = Math.max(0, idx-1); renderCard(true); updateStat(); }
     function markKnown(k){ if(!deck.length) return; if(k) known++; next(); }
     function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; renderCard(true); updateStat(); }
-    H('cd-new').addEventListener('click', buildDeck);
-    H('cd-shuffle').addEventListener('click', shuffleDeck);
-    H('cd-flip').addEventListener('click', flip);
-    H('cd-next').addEventListener('click', next);
-    H('cd-prev').addEventListener('click', prev);
-    H('cd-known').addEventListener('click', ()=>markKnown(true));
-    H('cd-unknown').addEventListener('click', ()=>markKnown(false));
+    document.getElementById('cd-new').addEventListener('click', buildDeck);
+    document.getElementById('cd-shuffle').addEventListener('click', shuffleDeck);
+    document.getElementById('cd-flip').addEventListener('click', flip);
+    document.getElementById('cd-next').addEventListener('click', next);
+    document.getElementById('cd-prev').addEventListener('click', prev);
+    document.getElementById('cd-known').addEventListener('click', ()=>markKnown(true));
+    document.getElementById('cd-unknown').addEventListener('click', ()=>markKnown(false));
     cdCard.addEventListener('click', flip);
     document.addEventListener('keydown', (e)=>{
       if(tabs.cd.classList.contains('hidden')) return;
@@ -347,5 +339,6 @@
     loadAll().then(()=>buildDeck());
   </script>
 </body></html>
+
 
 
