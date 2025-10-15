@@ -1,15 +1,13 @@
-
-:root{
-  --k-bg:#f6fbff; --k-card:#ffffff; --k-border:#dce7f2; --k-accent:#10b981; --k-blue:#2563eb; --k-text:#0b1220; --k-muted:#6b7280;
-}
-body{ background:linear-gradient(180deg,#f6fbff,#eef6ff); }
-.komi-tabs{ display:flex; gap:.5rem; margin:.5rem 0 1rem 0; flex-wrap:wrap }
-.komi-tab{ padding:.6rem 1rem; border:1px solid var(--k-border); border-radius:12px; cursor:pointer; background:#fff }
-.komi-tab.active{ background:linear-gradient(180deg,#10b981,#059669); color:#fff; border:none }
-.komi-card{ background:var(--k-card); border:1px solid var(--k-border); border-radius:20px; padding:20px; box-shadow:0 6px 20px rgba(16,38,84,.08); }
-.komi-row{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center }
-.komi-btn{ padding:.65rem 1rem; border-radius:12px; border:1px solid var(--k-border); background:linear-gradient(180deg,#fff,#f9fbfe); cursor:pointer }
-.komi-btn.primary{ background:linear-gradient(180deg,#10b981,#059669); color:#fff; border:none }
-.komi-muted{ color:var(--k-muted) }
-.komi-title{ font-weight:800; font-size:1.15rem }
-.komi-result{ min-height:2.6rem; padding:.8rem; border-radius:12px; border:1px dashed #cbd5e1; background:#f2f8ff; font-size:1.05rem }
+:root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
+*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh}
+.wrap{max-width:980px;margin:0 auto;padding:28px 16px}.brand{font-size:28px;margin:0 0 12px;font-weight:900}
+.brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+.komi-card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
+.komi-tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem;flex-wrap:wrap}.komи-tab{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+.komи-tab.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+.komи-title{font-size:20px;font-weight:800;margin-bottom:2px}.коми-sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+.коми-row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.коми-btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+.коми-btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+.коми-txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}.коми-result{min-height:48px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
+.badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
