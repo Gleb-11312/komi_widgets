@@ -1,35 +1,40 @@
 
 ;(function(){
-  async function loadJSON(url){ const r = await fetch(url); return r.json(); }
-  function norm(s){ return s.toLowerCase().replace(/[.,!?;:()"“”]/g,' ').replace(/\s+/g,' ').trim(); }
-  function toTokens(s){ return norm(s).split(' ').filter(Boolean); }
-  function longestMap(tokens, dict, maxN){
-    const out = []; const align=[]; let i=0;
+  async function loadJSON(u){ const r=await fetch(u); return r.json(); }
+  const norm = s => s.toLowerCase().replace(/[.,!?;:()"“”]/g,' ').replace(/\s+/g,' ').trim();
+  const toks = s => norm(s).split(' ').filter(Boolean);
+  function mapLongest(tokens, dict, n=3){
+    const out=[]; const unk=[]; let i=0;
     while(i<tokens.length){
-      let hit=null, phrase=null, k=0;
-      for(let n=Math.min(maxN, tokens.length-i); n>=1; n--){
-        const p = tokens.slice(i,i+n).join(' ');
-        if(dict[p]!==undefined){ hit=dict[p]; phrase=p; k=n; break; }
+      let hit=null, k=0;
+      for(let m=Math.min(n,tokens.length-i); m>=1; m--){
+        const p = tokens.slice(i,i+m).join(' ');
+        if(dict[p]!==undefined){ hit=dict[p]; k=m; break; }
       }
-      if(hit!==null){ out.push(hit); align.push([phrase, hit]); i+=k; }
-      else { out.push(tokens[i]); align.push([tokens[i], tokens[i]]); i+=1; }
+      if(hit!==null){ out.push(hit); i+=k; } else { out.push({__u:tokens[i]}); unk.push(tokens[i]); i++; }
     }
-    return { out, align };
+    return {out, unk};
   }
-  async function mount(selector, opts){
-    const el=document.querySelector(selector); if(!el) return;
-    const dataBase = opts?.dataBaseUrl || './data/';
-    const widgetsBase = opts?.widgetsBaseUrl || './widgets/';
-    const [enru, rukomi, audiomap] = await Promise.all([
-      loadJSON(dataBase+'en_ru.json'), loadJSON(dataBase+'ru_komi.json'),
-      loadJSON(dataBase+'audio_map.json').catch(()=>({}))
+  function finalize(chunks, mode){
+    const parts=[]; for(const c of chunks){
+      if(typeof c==='string') parts.push(c);
+      else if(c && c.__u){ if(mode==='drop'){} else if(mode==='mark'){ parts.push('‹?'+c.__u+'›'); } else { parts.push(c.__u); } }
+    }
+    return parts.join(' ').replace(/\s+/g,' ').trim();
+  }
+  async function mount(sel, opts){
+    const el=document.querySelector(sel); if(!el) return;
+    const dataBase=opts?.dataBaseUrl||'./data/';
+    const [enru, rukomi, amap]= await Promise.all([
+      loadJSON(dataBase+'en_ru.json'), loadJSON(dataBase+'ru_komi.json'), loadJSON(dataBase+'audio_map.json').catch(()=>({}))
     ]);
+    const strict=opts?.strictUnknown||'drop';
     el.innerHTML = `
-      <link rel="stylesheet" href="${widgetsBase+'komi-theme.css'}"/>
+      <link rel="stylesheet" href="${(opts?.widgetsBaseUrl||'./widgets/')+'komi-theme.css'}"/>
       <div class="komi-card">
         <div class="komi-title">English → Komi (demo)</div>
-        <div class="komi-muted" style="margin:.35rem 0">Short learner phrases. Internally EN→RU→Komi (RU step hidden).</div>
-        <textarea class="src" rows="3" placeholder="Type a short phrase in English…" style="padding:.75rem;border:1px solid #dce7f2;border-radius:12px;width:100%"></textarea>
+        <div class="komi-muted" style="margin:.35rem 0">Short learner phrases. Internal EN→RU→Komi. Unknown words: ${strict}.</div>
+        <textarea class="src" rows="3" placeholder="Type a short phrase in English…" style="padding:.75rem;border:1px solid var(--k-border);border-radius:12px;width:100%"></textarea>
         <div class="komi-row" style="margin-top:.6rem">
           <button class="do komi-btn primary">Translate</button>
           <button class="say komi-btn">Play audio</button>
@@ -37,28 +42,23 @@
         </div>
         <div class="komi-result out" style="margin-top:.6rem"></div>
       </div>`;
-    if(window.KomiTTS && window.KomiTTS.preloadAudioMap){
-      window.KomiTTS.preloadAudioMap(opts?.audioBaseUrl||'./audio/', audiomap);
-    }
-    const $src = el.querySelector('.src');
-    const $out = el.querySelector('.out');
-    const $hint = el.querySelector('.hint');
+    if(window.KomiTTS && window.KomiTTS.preloadAudioMap){ window.KomiTTS.preloadAudioMap(opts?.audioBaseUrl||'./audio/', amap); }
+    const $src=el.querySelector('.src'), $out=el.querySelector('.out'), $hint=el.querySelector('.hint');
     el.querySelector('.do').addEventListener('click', ()=>{
-      const t = $src.value||'';
-      if(t.length>220){ $hint.textContent='Too long (max 220 chars).'; return; }
-      const toks = toTokens(t);
-      const ru = longestMap(toks,enru,3).out.join(' ');
-      const ruToks = toTokens(ru);
-      const komi = longestMap(ruToks,rukomi,3).out.join(' ').replace(/\s+/g,' ').trim();
-      $out.textContent = komi;
-      el.dataset.last = komi;
-      $hint.textContent = komi ? 'Ready' : 'Try simpler phrasing';
+      const t=$src.value||''; if(t.length>500){ $hint.textContent='Too long (max 500 chars).'; return; }
+      const ru = mapLongest(toks(t), enru, 3);
+      const ruText = finalize(ru.out, strict);
+      const km = mapLongest(toks(ruText), rukomi, 3);
+      const kmText = finalize(km.out, strict);
+      $out.textContent=kmText;
+      el.dataset.last=kmText;
+      const u = ru.unk.concat(km.unk);
+      $hint.textContent = u.length ? `Dropped unknown: ${u.join(', ')}` : 'Ready';
     });
     el.querySelector('.say').addEventListener('click', async ()=>{
-      const text = el.dataset.last || $out.textContent || '';
-      if(!text) return;
-      const ok = await window.KomiTTS.speak(text);
-      if(!ok) $hint.textContent='Audio not available in this browser.';
+      const t = el.dataset.last || $out.textContent || ''; if(!t) return;
+      const ok = await (window.KomiTTS ? window.KomiTTS.speak(t) : Promise.resolve(false));
+      if(!ok) $hint.textContent='Audio not available.';
     });
   }
   window.KomiTranslator = { mount };

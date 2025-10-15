@@ -1,162 +1,32 @@
 {
-  "alphabet": {
-    "letters": [
-      {
-        "char": "А а",
-        "name": "A a"
-      },
-      {
-        "char": "І і",
-        "name": "I long"
-      },
-      {
-        "char": "Ӧ ӧ",
-        "name": "Ö ö"
-      },
-      {
-        "char": "Ӵ ӵ",
-        "name": "Ç ç"
-      },
-      {
-        "char": "Б б",
-        "name": "B b"
-      },
-      {
-        "char": "В в",
-        "name": "V v"
-      },
-      {
-        "char": "Г г",
-        "name": "G g"
-      },
-      {
-        "char": "Д д",
-        "name": "D d"
-      },
-      {
-        "char": "Ж ж",
-        "name": "Zh zh"
-      },
-      {
-        "char": "З з",
-        "name": "Z z"
-      },
-      {
-        "char": "И и",
-        "name": "I i"
-      },
-      {
-        "char": "Й й",
-        "name": "Y y"
-      },
-      {
-        "char": "К к",
-        "name": "K k"
-      },
-      {
-        "char": "Л л",
-        "name": "L l"
-      },
-      {
-        "char": "М м",
-        "name": "M m"
-      },
-      {
-        "char": "Н н",
-        "name": "N n"
-      },
-      {
-        "char": "О о",
-        "name": "O o"
-      },
-      {
-        "char": "П п",
-        "name": "P p"
-      },
-      {
-        "char": "Р р",
-        "name": "R r"
-      },
-      {
-        "char": "С с",
-        "name": "S s"
-      },
-      {
-        "char": "Т т",
-        "name": "T t"
-      },
-      {
-        "char": "У у",
-        "name": "U u"
-      },
-      {
-        "char": "Ф ф",
-        "name": "F f"
-      },
-      {
-        "char": "Х х",
-        "name": "Kh kh"
-      },
-      {
-        "char": "Ц ц",
-        "name": "Ts ts"
-      },
-      {
-        "char": "Ч ч",
-        "name": "Ch ch"
-      },
-      {
-        "char": "Ш ш",
-        "name": "Sh sh"
-      },
-      {
-        "char": "Щ щ",
-        "name": "Sch sch"
-      },
-      {
-        "char": "Ъ ъ",
-        "name": "ъ"
-      },
-      {
-        "char": "Ы ы",
-        "name": "Y y"
-      },
-      {
-        "char": "Ь ь",
-        "name": "ь"
-      },
-      {
-        "char": "Э э",
-        "name": "E e"
-      },
-      {
-        "char": "Ю ю",
-        "name": "Yu yu"
-      },
-      {
-        "char": "Я я",
-        "name": "Ya ya"
-      }
-    ]
-  },
   "quiz": [
     {
-      "q": "Как будет «доброе утро» на коми?",
+      "q": "How to say “Good morning” in Komi?",
       "options": [
-        "бур асыва",
-        "видзöд",
-        "джö",
-        "салют"
+        "Бур асыва",
+        "Салют",
+        "Видзöд",
+        "Джö"
       ],
       "answer": 0
     },
     {
-      "q": "Выберите слово «салют».",
+      "q": "Pick the Komi word for “Thank you”.",
       "options": [
-        "hello",
-        "goodbye",
-        "please",
-        "thank you"
+        "Бурай",
+        "Кыв",
+        "Тэ",
+        "Ӧскöл"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Translate “Hello (formal)”.",
+      "options": [
+        "Видза оланыд",
+        "Салют",
+        "Йӧн вон",
+        "Бур асыва"
       ],
       "answer": 0
     }

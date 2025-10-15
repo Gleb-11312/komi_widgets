@@ -1,16 +1,15 @@
 
 <!doctype html>
 <html lang="en"><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Komi Widgets v3</title>
-<body style="font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;background:linear-gradient(180deg,#f6fbff,#eef6ff);padding:16px">
-  <h1>Komі widgets v3 (EN → Komi)</h1>
-  <div id="translator" style="margin:12px 0"></div>
-  <div id="assistant" style="margin:12px 0"></div>
+<title>Komi Widgets v4</title>
+<body style="font-family:Inter,ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;padding:16px">
+  <h1>Komi widgets v4</h1>
+  <div id="tabs"></div>
   <script src="./widgets/komi-tts.js"></script>
   <script src="./widgets/komi-translate.js"></script>
   <script src="./widgets/komi-assistant.js"></script>
-  <script>
-    KomiTranslator.mount('#translator', { dataBaseUrl:'./data/', widgetsBaseUrl:'./widgets/', audioBaseUrl:'./audio/' });
-    KomiAssistant.mount('#assistant', { widgetsBaseUrl:'./widgets/' });
-  </script>
+  <script src="./widgets/komi-quiz.js"></script>
+  <script src="./widgets/komi-scramble.js"></script>
+  <script src="./widgets/komi-tabs.js"></script>
+  <script>KomiTabs.mount('#tabs', { dataBaseUrl:'./data/', widgetsBaseUrl:'./widgets/', audioBaseUrl:'./audio/' });</script>
 </body></html>

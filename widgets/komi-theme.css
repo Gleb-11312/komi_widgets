@@ -1,36 +1,15 @@
 
-/* Northern theme: green/white/blue */
 :root{
-  --k-bg:#f6fbff;
-  --k-card:#ffffff;
-  --k-border:#dce7f2;
-  --k-accent:#0ea5a0;  /* teal-green */
-  --k-accent-2:#2563eb; /* blue */
-  --k-text:#0b1220;
-  --k-muted:#6b7280;
+  --k-bg:#f6fbff; --k-card:#ffffff; --k-border:#dce7f2; --k-accent:#10b981; --k-blue:#2563eb; --k-text:#0b1220; --k-muted:#6b7280;
 }
-.komi-card{
-  background: var(--k-card);
-  border:1px solid var(--k-border);
-  border-radius:20px;
-  padding:20px;
-  box-shadow:0 6px 20px rgba(16,38,84,.08);
-}
-.komi-btn{
-  padding:.65rem 1rem;
-  border-radius:12px;
-  border:1px solid var(--k-border);
-  background: linear-gradient(180deg,#fff,#f9fbfe);
-  cursor:pointer;
-  transition: transform .06s ease, box-shadow .2s ease, border-color .2s;
-}
-.komi-btn:hover{ box-shadow:0 8px 24px rgba(16,38,84,.12); border-color:#cfe1f0; }
-.komi-btn.primary{ background: linear-gradient(180deg,#10b981,#059669); color:#fff; border:none; }
+body{ background:linear-gradient(180deg,#f6fbff,#eef6ff); }
+.komi-tabs{ display:flex; gap:.5rem; margin:.5rem 0 1rem 0; flex-wrap:wrap }
+.komi-tab{ padding:.6rem 1rem; border:1px solid var(--k-border); border-radius:12px; cursor:pointer; background:#fff }
+.komi-tab.active{ background:linear-gradient(180deg,#10b981,#059669); color:#fff; border:none }
+.komi-card{ background:var(--k-card); border:1px solid var(--k-border); border-radius:20px; padding:20px; box-shadow:0 6px 20px rgba(16,38,84,.08); }
 .komi-row{ display:flex; gap:.6rem; flex-wrap:wrap; align-items:center }
-.komi-muted{ color: var(--k-muted) }
-.komi-result{
-  min-height:2.6rem; padding:.8rem; border-radius:12px;
-  border:1px dashed #cbd5e1; background:#f2f8ff;
-  font-size:1.05rem;
-}
-.komi-title{ font-weight:800; font-size:1.15rem; letter-spacing:.2px }
+.komi-btn{ padding:.65rem 1rem; border-radius:12px; border:1px solid var(--k-border); background:linear-gradient(180deg,#fff,#f9fbfe); cursor:pointer }
+.komi-btn.primary{ background:linear-gradient(180deg,#10b981,#059669); color:#fff; border:none }
+.komi-muted{ color:var(--k-muted) }
+.komi-title{ font-weight:800; font-size:1.15rem }
+.komi-result{ min-height:2.6rem; padding:.8rem; border-radius:12px; border:1px dashed #cbd5e1; background:#f2f8ff; font-size:1.05rem }
