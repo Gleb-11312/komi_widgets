@@ -1,59 +1,43 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Komi widgets — Translator · Assistant · Cards</title>
+  <title>Komi widgets — Translator & Assistant</title>
   <style>
-    :root{
-      --bg:#f7fbff; --card:#ffffff; --ink:#0b1230; --muted:#5b6475;
-      --border:#dbe7f4; --shadow:rgba(13,38,76,.08);
-      --accent:#16a34a; --accent2:#0ea5e9;
-    }
+    :root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
     *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--ink)}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 16px 64px}
-    .brand{font-size:28px;font-weight:900;margin:0 0 12px}
-    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:8px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-    .tabs{display:flex;gap:.5rem;margin:.5rem 0 1rem;flex-wrap:wrap}
-    .tab-btn{padding:.6rem 1rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
+    .brand{font-size:28px;margin:0 0 12px;font-weight:900}
+    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem}
+    .tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
     .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:18px;padding:20px;box-shadow:0 16px 40px var(--shadow)}
-    .title{font-size:20px;font-weight:800;margin-bottom:4px}
-    .sub{color:var(--muted);font-size:14px;margin-bottom:12px}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
+    .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
     .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
     .btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
     .btn[disabled]{opacity:.6;cursor:not-allowed}
-    .txt,textarea.txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border);background:#fff}
+    .txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
     .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
     .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
     .hint{font-size:12px;color:var(--muted)}
     .hidden{display:none}
     .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
     .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
-    /* Cards */
-    .cards-wrap{display:grid;grid-template-columns:1fr;gap:14px}
-    .fc{height:220px;border-radius:18px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;
-        font-weight:800;font-size:28px;cursor:pointer;transform-style:preserve-3d;transition:transform .35s}
-    .fc.flipped{transform:rotateY(180deg)}
-    .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:18px;backface-visibility:hidden;padding:18px}
-    .front{background:#ffffff}
-    .back{transform:rotateY(180deg);background:linear-gradient(135deg,#eaf6ff,#ffffff)}
-    .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
-    .progress{height:8px;border-radius:999px;background:#eef6ff;border:1px solid var(--border);overflow:hidden}
-    .progress .pbar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1 class="brand">Komi widgets <span class="v">Translator · Assistant · Cards</span></h1>
+    <h1 class="brand">Komi widgets <span class="v">Translator & Assistant</span></h1>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="tr">Translator</button>
       <button class="tab-btn" data-tab="as">Assistant</button>
-      <button class="tab-btn" data-tab="cd">Cards</button>
     </div>
 
-    <!-- Translator -->
     <div id="tab-tr" class="card">
       <div class="title">English → Komi Translator (beta)</div>
       <div class="sub">Type a word or a short phrase in English. This translator returns Komi text.</div>
@@ -65,10 +49,9 @@
       <div id="out" class="out"></div>
     </div>
 
-    <!-- Assistant -->
     <div id="tab-as" class="card hidden">
       <div class="title">Assistant (Speak Komi)</div>
-      <div class="sub">We translate to Komi, play it in Komi, then you repeat and get a score.</div>
+      <div class="sub">Enter an English word/phrase — we translate to Komi, play it in Komi, then you repeat and get a score.</div>
       <input id="as-text" class="txt" placeholder="Type an English word… e.g. hello" />
       <div class="row" style="margin-top:.6rem">
         <button id="as-say" class="btn">Play Komi</button>
@@ -78,59 +61,23 @@
       <div class="meter"><div id="as-bar" class="bar"></div></div>
       <div class="hint" id="as-hint"></div>
     </div>
-
-    <!-- Cards -->
-    <div id="tab-cd" class="card hidden">
-      <div class="title">Cards (Quizlet-style)</div>
-      <div class="sub">Flip to see translation. Choose direction, size and mark known/unknown. Hotkeys: Space (flip), ←/→ (prev/next), 1 (known), 2 (unknown).</div>
-      <div class="panel">
-        <label>Direction:
-          <select id="cd-dir" class="btn">
-            <option value="en2ko">EN → Komi</option>
-            <option value="ko2en">Komi → EN</option>
-          </select>
-        </label>
-        <label>Size:
-          <select id="cd-size" class="btn">
-            <option value="25">25</option><option value="50">50</option><option value="100" selected>100</option>
-          </select>
-        </label>
-        <button id="cd-new" class="btn primary">Build deck</button>
-        <button id="cd-shuffle" class="btn">Shuffle</button>
-        <span id="cd-stat" class="badge">0 / 0</span>
-      </div>
-      <div class="cards-wrap">
-        <div id="cd-card" class="fc" tabindex="0">
-          <div class="face front" id="cd-front">—</div>
-          <div class="face back"  id="cd-back">—</div>
-        </div>
-        <div class="panel">
-          <button id="cd-prev" class="btn">← Prev</button>
-          <button id="cd-flip" class="btn">Flip (Space)</button>
-          <button id="cd-next" class="btn">Next →</button>
-          <button id="cd-known" class="btn primary">I know (1)</button>
-          <button id="cd-unknown" class="btn">Don’t know (2)</button>
-          <div class="progress" style="flex:1 1 200px"><div id="cd-pbar" class="pbar"></div></div>
-        </div>
-      </div>
-    </div>
   </div>
 
   <script>
-    /* ------------ tabs ------------ */
-    const tabs={tr:document.getElementById('tab-tr'),as:document.getElementById('tab-as'),cd:document.getElementById('tab-cd')};
+    // ----- UI tabs -----
+    const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
       document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
       tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
       tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
-      tabs.cd.classList.toggle('hidden', b.dataset.tab!=='cd');
     }));
 
-    /* -------- utils & translit -------- */
+    // ----- utils -----
     const H=id=>document.getElementById(id);
-    const norm=s=>(s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
-    const toks=s=>norm(s).split(' ').filter(Boolean);
+    const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
+    const toks = s => norm(s).split(' ').filter(Boolean);
+
     function mapLongest(tokens, dict, n=4){
       const out=[], unk=[]; let i=0;
       while(i<tokens.length){
@@ -143,202 +90,130 @@
       }
       return {out,unk};
     }
+
     const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
     const cmap={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
     function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
     function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
 
-    /* -------- dictionary globals -------- */
-    let DICT=null;   // EN->Komi прямой (и overlays)
-    let ENRU=null;   // EN->RU мост
-    let RUKO=null;   // RU->Komi мост
-
-    /* -------- small fallback so UI works even w/o files -------- */
-    const FALLBACK_DICT={
-      "i":"ме","you":"тэ","we":"ми","hello":"видза оланыд","hi":"чолӧн","good morning":"бур асыва","goodbye":"видзӧд",
-      "cat":"кань","dog":"пон","water":"удж","milk":"эм","bread":"хлеб","house":"кӧрт","home":"кӧрт","city":"гӧрӧд",
-      "eat":"ӧтны","drink":"войны","go":"кӧдзыны","come":"мунӧм","speak":"вежыны","learn":"кытчӧдны","read":"лӧмын","write":"писавны",
-      "love":"джугӧдчыны","want":"вӧвны","know":"видзчыны","sleep":"сонны","work":"орччыны"
-    };
-    const FALLBACK_ENRU={
-      "i":"я","you":"ты","we":"мы","hello":"здравствуйте","hi":"привет","good morning":"доброе утро","goodbye":"до свидания",
-      "cat":"кот","dog":"собака","water":"вода","milk":"молоко","bread":"хлеб","house":"дом","home":"дом","city":"город",
-      "eat":"есть","drink":"пить","go":"идти","come":"приходить","speak":"говорить","learn":"учиться","read":"читать","write":"писать",
-      "love":"любить","want":"хотеть","know":"знать","sleep":"спать","work":"работать"
-    };
-    const FALLBACK_RUKO={
-      "я":"ме","ты":"тэ","мы":"ми","здравствуйте":"видза оланыд","привет":"чолӧн","доброе утро":"бур асыва","до свидания":"видзӧд",
-      "кот":"кань","собака":"пон","вода":"удж","молоко":"эм","хлеб":"хлеб","дом":"кӧрт","город":"гӧрӧд",
-      "есть":"ӧтны","пить":"войны","идти":"кӧдзыны","приходить":"мунӧм","говорить":"вежыны","учиться":"кытчӧдны","читать":"лӧмын","писать":"писавны",
-      "любить":"джугӧдчыны","хотеть":"вӧвны","знать":"видзчыны","спать":"сонны","работать":"орччыны"
-    };
-
-    /* -------- dictionary load (base + overlays + bridge) -------- */
+    // ----- dictionary load (base + overlays) -----
+    let DICT=null;
     async function loadAll(){
-      let statusNote = '';
-      // 1) прямой словарь + overlays
+      const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
+      let dict = {...base};
+      // подтягиваем все overlays overlay_1..overlay_9 + overlay_verbs_1/2 и любые overlay_*.json
+      const overlayNames = [
+        ...Array.from({length:9}, (_,i)=>`overlay_${i+1}.json`),
+        'overlay_verbs_1.json','overlay_verbs_2.json'
+      ];
+      for(const name of overlayNames){
+        try{
+          const ov = await fetch(`./data/overlays/${name}`,{cache:'no-store'});
+          if(ov.ok){ Object.assign(dict, await ov.json()); }
+        }catch(e){}
+      }
+      // также подхватить произвольные overlay_*.json (если позже добавишь новые)
       try{
-        const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
-        let dict = {...base};
-        const overlayNames=[...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),'overlay_verbs_1.json','overlay_verbs_2.json'];
-        for(const name of overlayNames){
-          try{
-            const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'});
-            if(res.ok){ Object.assign(dict, await res.json()); }
-          }catch(e){}
+        // просто попытка перебором до 30
+        for(let i=10;i<=30;i++){
+          const res = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'});
+          if(res.ok){ Object.assign(dict, await res.json()); }
         }
-        DICT = dict;
-      }catch(e){
-        DICT = {...FALLBACK_DICT};
-        statusNote += ' · fallback direct';
-      }
+      }catch(e){}
 
-      // 2) мосты
-      try{ ENRU = await fetch('./data/en_ru.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ ENRU=null; }
-      try{ RUKO = await fetch('./data/ru_komi.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ RUKO=null; }
+      // быстрые формы (глаголы, мн.ч)
+      const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
+      const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+      const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
+      const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
+      verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
+      const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
+      const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+      nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
 
-      if(!ENRU||!RUKO){ ENRU = ENRU||{...FALLBACK_ENRU}; RUKO = RUKO||{...FALLBACK_RUKO}; statusNote += ' · fallback bridge'; }
-
-      H('hint').textContent='Ready ('+Object.keys(DICT).length+' direct; bridge '+Object.keys(ENRU).length+'/'+Object.keys(RUKO).length+')'+statusNote;
+      DICT = dict;
+      H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
     }
 
-    // Пробуем скрытый транзит EN -> RU -> Komi
-    function bridgeTranslate(enTokens){
-      if(!ENRU || !RUKO) return {text:'', unk:[]};
-      // шаг 1: EN -> RU
-      const ru1 = mapLongest(enTokens, ENRU, 4);
-      const ruPieces = [];
-      for(const piece of ru1.out){
-        if(typeof piece==='string'){ ruPieces.push(...toks(piece)); }
-        else if(piece && piece.__u){ ruPieces.push(piece.__u); }
-      }
-      // шаг 2: RU -> Komi
-      const ko = mapLongest(ruPieces, RUKO, 4);
-      const text = finalize(ko.out);
-      return {text, unk:[...new Set(ru1.unk.concat(ko.unk))]};
-    }
-
-    /* -------- Translator -------- */
+    // ----- Translator -----
     function translate(){
-      if(!DICT){ H('hint').textContent='Dictionary not found'; return; }
-      const tokens = toks(H('src').value);
-
-      // прямой EN->Komi
-      const directRes = mapLongest(tokens, DICT, 4);
-      const directText = finalize(directRes.out);
-      const directUnk  = new Set(directRes.unk);
-
-      // мост EN->RU->Komi
-      const bridgeRes = bridgeTranslate(tokens);
-      const bridgeUnk = new Set(bridgeRes.unk||[]);
-
-      let bestText, bestUnk;
-      if(bridgeUnk.size < directUnk.size || (bridgeUnk.size===directUnk.size && (bridgeRes.text||'').length > (directText||'').length)){
-        bestText = bridgeRes.text || directText;
-        bestUnk  = bridgeUnk;
-      }else{
-        bestText = directText;
-        bestUnk  = directUnk;
-      }
-
-      H('out').textContent = bestText;
-      H('hint').textContent = bestUnk.size ? ('Unknown: ' + [...bestUnk].join(', ')) : 'OK';
+      if(!DICT){H('hint').textContent='Dictionary not found';return;}
+      const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
+      H('out').textContent = finalize(out);
+      H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
     }
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
-    /* -------- Assistant -------- */
+    // ----- Assistant -----
     function toKomi(text){
-      const tokens = toks(text);
-      const directRes = mapLongest(tokens, DICT||{}, 4);
-      const directText = finalize(directRes.out);
-      const bridgeRes = bridgeTranslate(tokens);
-      const directUnk = new Set(directRes.unk||[]);
-      const bridgeUnk = new Set(bridgeRes.unk||[]);
-      if(bridgeUnk.size < directUnk.size || (bridgeUnk.size===directUnk.size && (bridgeRes.text||'').length > (directText||'').length)){
-        return bridgeRes.text || directText;
-      }
-      return directText;
+      const {out} = mapLongest(toks(text), DICT||{}, 4);
+      return finalize(out);
     }
     const status = t => H('as-status').textContent=t;
     const setScore = v => H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
+
     function speakKomi(text){
-      const u=new SpeechSynthesisUtterance(text); u.lang='ru-RU'; u.rate=0.95;
-      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null; if(pick) u.voice=pick;
+      const u=new SpeechSynthesisUtterance(text);
+      u.lang='ru-RU'; u.rate=0.95;
+      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null;
+      if(pick) u.voice=pick;
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
-    function dist(a,b){a=a.toLowerCase();b=b.toLowerCase();const m=[];for(let i=0;i<=a.length;i++){m[i]=[i]}for(let j=1;j<=b.length;j++)m[0][j]=j;
-      for(let i=1;i<=a.length;i++){for(let j=1;j<=b.length;j++){m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));}}return m[a.length][b.length];}
-    function scoreRef(rec,ref){const d=dist(rec,ref);const max=Math.max(ref.length,1);const s=Math.round(100*(1-d/max));return Math.max(0,Math.min(100,s));}
-    H('as-say').addEventListener('click', ()=>{const en=(H('as-text').value||'').trim(); if(!en) return; const kom=toKomi(en); speakKomi(kom); status('Repeat in Komi: "'+kom+'"');});
-    H('as-record').addEventListener('click', ()=>{
-      const en=(H('as-text').value||'').trim(); if(!en) return; const target=toKomi(en);
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ status('Mic error: not supported'); return; }
+
+    function dist(a,b){
+      a=a.toLowerCase(); b=b.toLowerCase();
+      const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
+      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){ m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1)); } }
+      return m[a.length][b.length];
+    }
+    function scoreRef(rec, ref){
+      const d=dist(rec,ref); const max=Math.max(ref.length,1);
+      const s=Math.round(100*(1-d/max));
+      return Math.max(0,Math.min(100,s));
+    }
+
+    document.getElementById('as-say').addEventListener('click', ()=>{
+      const en=(H('as-text').value||'').trim(); if(!en) return;
+      const kom = toKomi(en);
+      speakKomi(kom);
+      status('Repeat in Komi: "'+kom+'"');
+    });
+
+    document.getElementById('as-record').addEventListener('click', ()=>{
+      const en=(H('as-text').value||'').trim(); if(!en) return;
+      const target = toKomi(en);
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+      if(!SR){ status('Mic error: not supported'); return; }
       const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
-      status('Listening…'); H('as-record').disabled=true; setScore(0); H('as-hint').textContent='';
-      rec.onresult=(e)=>{const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,target); setScore(s); status('Score: '+s+' / 100'); H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';};
-      rec.onerror =(e)=>{ status('Mic error: ' + (e.error || 'unknown')); console.error('SpeechRecognition error:', e);};
-      rec.onend   =()=>{ if(H('as-status').textContent==='Listening…') status('Ready'); H('as-record').disabled=false; };
-      try{ rec.start(); }catch(err){ status('Mic error: start failed'); H('as-record').disabled=false; }
-    });
 
-    /* -------- Cards -------- */
-    let deck=[], idx=0, known=0;
-    const cdFront=H('cd-front'), cdBack=H('cd-back'), cdCard=H('cd-card');
-    function allPairs(){
-      const src = DICT || FALLBACK_DICT;
-      const out=[];
-      for(const [en,val] of Object.entries(src)){
-        if(typeof val!=='string') continue;
-        if(en.split(' ').length>2) continue;
-        if(!/^[a-z]/.test(en)) continue;
-        out.push([en, val]);
+      status('Listening…');
+      H('as-record').disabled = true; setScore(0); H('as-hint').textContent = '';
+
+      rec.onresult=(e)=>{
+        const heard=e.results[0][0].transcript||'';
+        const s=scoreRef(heard,target);
+        setScore(s);
+        status('Score: '+s+' / 100');
+        H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';
+      };
+      rec.onerror =(e)=>{
+        status('Mic error: ' + (e.error || 'unknown'));
+        console.error('SpeechRecognition error:', e);
+      };
+      rec.onend   =()=>{
+        if(H('as-status').textContent==='Listening…') status('Ready');
+        H('as-record').disabled = false;
+      };
+      try{ rec.start(); }catch(err){
+        status('Mic error: start failed'); H('as-record').disabled=false;
       }
-      return out;
-    }
-    function buildDeck(){
-      const dir = H('cd-dir').value; const size = +H('cd-size').value;
-      let pairs = allPairs();
-      pairs.sort((a,b)=>a[0].length-b[0].length);
-      for(let i=pairs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pairs[i],pairs[j]]=[pairs[j],pairs[i]]; }
-      pairs = pairs.slice(0, size);
-      deck = pairs.map(([en,ko]) => dir==='en2ko' ? {q:en,a:ko} : {q:ko,a:en});
-      known=0; idx=0; renderCard(true); updateStat();
-    }
-    function renderCard(resetFlip){
-      if(!deck.length){ cdFront.textContent='—'; cdBack.textContent='—'; return; }
-      const it = deck[idx];
-      cdFront.textContent = it.q; cdBack.textContent = it.a;
-      if(resetFlip) cdCard.classList.remove('flipped');
-      document.getElementById('cd-pbar').style.width = Math.round((idx/deck.length)*100)+'%';
-    }
-    function updateStat(){ document.getElementById('cd-stat').textContent = `${idx+1} / ${deck.length} · known: ${known}`; }
-    function flip(){ cdCard.classList.toggle('flipped'); }
-    function next(){ if(!deck.length) return; idx = Math.min(deck.length-1, idx+1); renderCard(true); updateStat(); }
-    function prev(){ if(!deck.length) return; idx = Math.max(0, idx-1); renderCard(true); updateStat(); }
-    function markKnown(k){ if(!deck.length) return; if(k) known++; next(); }
-    function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; renderCard(true); updateStat(); }
-    document.getElementById('cd-new').addEventListener('click', buildDeck);
-    document.getElementById('cd-shuffle').addEventListener('click', shuffleDeck);
-    document.getElementById('cd-flip').addEventListener('click', flip);
-    document.getElementById('cd-next').addEventListener('click', next);
-    document.getElementById('cd-prev').addEventListener('click', prev);
-    document.getElementById('cd-known').addEventListener('click', ()=>markKnown(true));
-    document.getElementById('cd-unknown').addEventListener('click', ()=>markKnown(false));
-    cdCard.addEventListener('click', flip);
-    document.addEventListener('keydown', (e)=>{
-      if(tabs.cd.classList.contains('hidden')) return;
-      if(e.code==='Space'){e.preventDefault();flip();}
-      else if(e.key==='ArrowRight') next();
-      else if(e.key==='ArrowLeft') prev();
-      else if(e.key==='1') markKnown(true);
-      else if(e.key==='2') markKnown(false);
     });
 
-    /* boot */
-    loadAll().then(()=>buildDeck());
+    loadAll();
   </script>
 </body></html>
+
 
 
 
