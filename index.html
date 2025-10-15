@@ -1,21 +1,21 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Komi widgets — Translator · Assistant · Games</title>
+  <title>Komi widgets — Translator · Assistant · Cards</title>
   <style>
     :root{
-      --bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;
-      --accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)
+      --bg1:#0a1224;--bg2:#0f1b33;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;
+      --accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.18)
     }
     *{box-sizing:border-box}
     body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh;position:relative;padding-bottom:220px}
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh;position:relative;padding-bottom:260px}
     .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
-    .brand{font-size:28px;margin:0 0 12px;font-weight:900}
+    .brand{color:#e7f2ff;font-size:28px;margin:0 0 12px;font-weight:900}
     .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
       background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
     .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem;flex-wrap:wrap}
-    .tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+    .tab-btn{padding:.58rem 1.05rem;border:1px solid #2b3b56;border-radius:999px;background:#0f1c34;color:#d9e8ff;cursor:pointer}
     .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
     .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
     .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
@@ -31,49 +31,39 @@
     .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
     .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
 
-    /* Games */
-    .grid{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px}
-    .cardgame{height:110px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid var(--border);
-      background:#fff;cursor:pointer;transform-style:preserve-3d;transition:transform .35s}
-    .cardgame.flipped{transform:rotateY(180deg)}
-    .cardgame .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:14px;backface-visibility:hidden}
-    .cardgame .back{background:linear-gradient(135deg,#d7eefc,#f1faff);border:1px dashed #c6d9ea}
-    .cardgame .front{transform:rotateY(180deg);font-weight:800;font-size:18px}
-    .panel{display:flex;gap:10px;align-items:center;margin:.5rem 0 .75rem}
+    /* Cards */
+    .cards-wrap{display:grid;grid-template-columns:1fr;gap:14px}
+    .fc{height:220px;border-radius:18px;border:1px solid var(--border);background:#fff;display:flex;align-items:center;justify-content:center;
+        font-weight:800;font-size:28px;cursor:pointer;transform-style:preserve-3d;transition:transform .35s}
+    .fc.flipped{transform:rotateY(180deg)}
+    .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:18px;backface-visibility:hidden;padding:18px}
+    .front{background:#ffffff}
+    .back{transform:rotateY(180deg);background:linear-gradient(135deg,#eaf6ff,#f7fbff)}
+    .panel{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+    .progress{height:8px;border-radius:999px;background:#eef6ff;border:1px solid var(--border);overflow:hidden}
+    .progress .pbar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2))}
 
-    /* Word rain */
-    .rain-stage{position:relative;height:280px;border-radius:16px;border:1px solid var(--border);background:#f8fbff;overflow:hidden}
-    .drop{position:absolute;top:-36px;left:0;transform:translateX(-50%);padding:.35rem .6rem;background:#fff;border:1px solid var(--border);
-      border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.05)}
-    .confetti{position:absolute;width:6px;height:10px;pointer-events:none}
-
-    /* Animated footer scene (waving Komi flag + bear walking) */
-    .scene{position:fixed;left:0;right:0;bottom:0;height:200px;pointer-events:none}
-    .scene-inner{position:absolute;inset:0}
-    .forest{position:absolute;inset:auto 0 0 0;height:140px;background:
-        linear-gradient(#0d1b2a,#0d1b2a) bottom/100% 50px no-repeat,
-        url('data:image/svg+xml;utf8,\
-<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"140\" viewBox=\"0 0 800 140\">\
-<g fill=\"%230b3a2e\" opacity=\".25\">\
-<path d=\"M0,120 L50,100 L80,120 L120,90 L160,120 L200,95 L240,120 L280,100 L320,120 L360,90 L400,120 L440,100 L480,120 L520,95 L560,120 L600,100 L640,120 L680,90 L720,120 L760,100 L800,120 L800,140 L0,140 Z\"/>\
-</g></svg>') center bottom/1600px 140px repeat-x;
-      animation:forest 30s linear infinite}
-    @keyframes forest{to{background-position:0 0, -1600px 0}}
-
-    .bear{position:absolute;bottom:40px;left:-220px;width:180px;opacity:.9;animation:bearwalk 18s linear infinite}
+    /* Aurora + bear footer */
+    .scene{position:fixed;left:0;right:0;bottom:0;height:240px;pointer-events:none}
+    .aurora{position:absolute;inset:0;background:
+      radial-gradient(60% 90% at 10% 30%, rgba(25,231,151,.40), transparent 60%),
+      radial-gradient(50% 80% at 70% 0%, rgba(80,220,255,.35), transparent 60%),
+      radial-gradient(40% 100% at 40% 10%, rgba(80,140,255,.25), transparent 60%);
+      filter:blur(14px) saturate(120%);animation:aur 12s ease-in-out infinite alternate}
+    @keyframes aur{from{transform:translateY(0)}to{transform:translateY(-18px)}}
+    .ground{position:absolute;left:0;right:0;bottom:0;height:90px;background:linear-gradient(#0b1226,#0b1226) bottom/100% 70px no-repeat}
+    .bear{position:absolute;bottom:60px;left:-220px;width:210px;opacity:.95;animation:bearwalk 20s linear infinite}
     @keyframes bearwalk{to{transform:translateX(120vw)}}
-    .flag{position:absolute;right:8%;bottom:98px;width:220px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.15))}
-    .flag svg{width:100%;height:auto}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1 class="brand">Komi widgets <span class="v">Translator · Assistant · Games</span></h1>
+    <h1 class="brand">Komi widgets <span class="v">Translator · Assistant · Cards</span></h1>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="tr">Translator</button>
       <button class="tab-btn" data-tab="as">Assistant</button>
-      <button class="tab-btn" data-tab="gm">Games</button>
+      <button class="tab-btn" data-tab="cd">Cards</button>
     </div>
 
     <!-- Translator -->
@@ -102,75 +92,66 @@
       <div class="hint" id="as-hint"></div>
     </div>
 
-    <!-- Games -->
-    <div id="tab-gm" class="card hidden">
-      <div class="title">Games</div>
-      <div class="sub">Two small animated games powered by your dictionary.</div>
-
-      <!-- Memory -->
+    <!-- Cards -->
+    <div id="tab-cd" class="card hidden">
+      <div class="title">Cards (Quizlet-style)</div>
+      <div class="sub">Flip to see translation. Choose direction, size and mark known/unknown. Hotkeys: Space (flip), ←/→ (prev/next), 1 (known), 2 (unknown).</div>
       <div class="panel">
-        <button id="g-mem-new" class="btn primary">New Memory Match</button>
-        <span id="g-mem-info" class="badge">Pairs: 0/0</span>
+        <label>Direction:
+          <select id="cd-dir" class="btn">
+            <option value="en2ko">EN → Komi</option>
+            <option value="ko2en">Komi → EN</option>
+          </select>
+        </label>
+        <label>Size:
+          <select id="cd-size" class="btn">
+            <option value="25">25</option><option value="50">50</option><option value="100" selected>100</option>
+          </select>
+        </label>
+        <button id="cd-new" class="btn primary">Build deck</button>
+        <button id="cd-shuffle" class="btn">Shuffle</button>
+        <span id="cd-stat" class="badge">0 / 0</span>
       </div>
-      <div id="g-mem-grid" class="grid" aria-live="polite"></div>
-
-      <!-- Word Rain -->
-      <hr style="border:none;height:1px;background:var(--border);margin:18px 0">
-      <div class="panel">
-        <button id="g-rain-start" class="btn primary">Start Word Rain</button>
-        <span id="g-rain-score" class="badge">Score: 0</span>
-        <span id="g-rain-life" class="badge">Lives: 3</span>
+      <div class="cards-wrap">
+        <div id="cd-card" class="fc" tabindex="0">
+          <div class="face front" id="cd-front">—</div>
+          <div class="face back"  id="cd-back">—</div>
+        </div>
+        <div class="panel">
+          <button id="cd-prev" class="btn">← Prev</button>
+          <button id="cd-flip" class="btn">Flip (Space)</button>
+          <button id="cd-next" class="btn">Next →</button>
+          <button id="cd-known" class="btn primary">I know (1)</button>
+          <button id="cd-unknown" class="btn">Don’t know (2)</button>
+          <div class="progress" style="flex:1 1 200px"><div id="cd-pbar" class="pbar"></div></div>
+        </div>
       </div>
-      <div class="rain-stage" id="g-rain-stage"></div>
-      <input id="g-rain-input" class="txt" placeholder="Type Komi translation here and press Enter" />
     </div>
   </div>
 
-  <!-- Animated footer scene -->
+  <!-- Aurora & bear -->
   <div class="scene" aria-hidden="true">
-    <div class="scene-inner">
-      <div class="forest"></div>
-      <!-- Bear silhouette -->
-      <svg class="bear" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
-        <path d="M82 262c8 31 47 50 96 50 88 0 172-64 220-55 38 8 66 36 88 31 17-3 24-23 17-38-5-12-17-21-29-26 12-8 20-21 17-34-4-17-25-26-45-22-18 4-34 15-46 29-16-26-39-49-75-61-51-17-99-3-141 17-21 10-35 2-55-13-11-8-26-14-36-8-12 7-10 25 3 34 19 13 39 13 53 25-29 16-41 38-36 71z"
-              fill="#0b3a2e" opacity=".9"/>
-      </svg>
-      <!-- Waving Komi flag (green–white–blue) -->
-      <div class="flag">
-        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
-          <defs>
-            <linearGradient id="komi1" x1="0" x2="0" y1="0" y2="1">
-              <stop offset="0" stop-color="#198754"/>
-              <stop offset="0.34" stop-color="#198754"/>
-              <stop offset="0.34" stop-color="#ffffff"/>
-              <stop offset="0.67" stop-color="#ffffff"/>
-              <stop offset="0.67" stop-color="#1e90ff"/>
-              <stop offset="1" stop-color="#1e90ff"/>
-            </linearGradient>
-            <filter id="wave">
-              <feTurbulence baseFrequency="0.012 0.18" numOctaves="2" seed="3" result="turb"/>
-              <feDisplacementMap in="SourceGraphic" in2="turb" scale="9" xChannelSelector="R" yChannelSelector="G"/>
-              <animate xlink:href="#turb" attributeName="seed" from="3" to="33" dur="12s" repeatCount="indefinite"/>
-            </filter>
-          </defs>
-          <rect x="0" y="0" width="300" height="180" rx="9" fill="url(#komi1)" filter="url(#wave)"/>
-        </svg>
-      </div>
-    </div>
+    <div class="aurora"></div>
+    <div class="ground"></div>
+    <!-- простой «нормальный» медведь (SVG) -->
+    <svg class="bear" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
+      <path fill="#c6d2dd" d="M170 250c20 40 75 60 138 58 96-3 156-64 214-61 32 2 60 24 72 21 11-3 15-19 9-30-4-7-10-12-18-16 9-8 14-17 12-27-3-14-19-23-38-22-18 1-36 9-52 22-12-25-36-58-86-73-63-19-123 1-170 26-21 12-34 8-55-6-12-8-27-14-36-8-9 6-9 18 2 26 16 12 32 13 45 22-31 17-43 43-37 68z"/>
+      <circle cx="510" cy="180" r="6" fill="#0b1230"/>
+    </svg>
   </div>
 
   <script>
-    /* ----------- tabs ----------- */
-    const tabs={tr:document.getElementById('tab-tr'),as:document.getElementById('tab-as'),gm:document.getElementById('tab-gm')};
+    /* ------------ tabs ------------ */
+    const tabs={tr:document.getElementById('tab-tr'),as:document.getElementById('tab-as'),cd:document.getElementById('tab-cd')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
       document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
       tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
       tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
-      tabs.gm.classList.toggle('hidden', b.dataset.tab!=='gm');
+      tabs.cd.classList.toggle('hidden', b.dataset.tab!=='cd');
     }));
 
-    /* -------- utils -------- */
+    /* -------- utils & translit -------- */
     const H=id=>document.getElementById(id);
     const norm=s=>(s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
     const toks=s=>norm(s).split(' ').filter(Boolean);
@@ -196,14 +177,11 @@
     async function loadAll(){
       const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
       let dict = {...base};
-      const overlayNames=[
-        ...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),
-        'overlay_verbs_1.json','overlay_verbs_2.json'
-      ];
+      const overlayNames=[...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),'overlay_verbs_1.json','overlay_verbs_2.json'];
       for(const name of overlayNames){
         try{const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'}); if(res.ok){Object.assign(dict, await res.json());}}catch(e){}
       }
-      /* быстрые формы (неск. глаголов и мн.ч) */
+      /* авто-формы */
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
@@ -250,97 +228,67 @@
       try{ rec.start(); }catch(err){ status('Mic error: start failed'); H('as-record').disabled=false; }
     });
 
-    /* -------- Games: Memory Match -------- */
-    const memGrid=H('g-mem-grid'), memInfo=H('g-mem-info'); let memLock=false, memFirst=null, memPairs=0, memTotal=0;
-    function samplePairs(n=6){
-      const keys=Object.keys(DICT||{}).filter(k=>/^[a-z]/.test(k)&&typeof DICT[k]==='string');
-      const pick=[]; while(pick.length<n && keys.length){ const i=Math.floor(Math.random()*keys.length); const en=keys.splice(i,1)[0]; pick.push([en, DICT[en]]); }
-      return pick;
-    }
-    function newMemory(){
-      if(!DICT) return; memGrid.innerHTML=''; memLock=false; memFirst=null; memPairs=0;
-      const pairs = samplePairs(6); memTotal=pairs.length;
-      const cards=[];
-      pairs.forEach(([en,kom],i)=>{ cards.push({id:`en${i}`,front:en,type:'en',pair:i}); cards.push({id:`ko${i}`,front:kom,type:'ko',pair:i}); });
-      for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}
-      for(const c of cards){
-        const el=document.createElement('div'); el.className='cardgame'; el.dataset.id=c.id; el.dataset.pair=c.pair;
-        el.innerHTML=`<div class="face back">?</div><div class="face front">${c.front}</div>`;
-        el.addEventListener('click', ()=>flipCard(el));
-        memGrid.appendChild(el);
+    /* -------- Cards (Quizlet style) -------- */
+    let deck=[], idx=0, known=0;
+    const cdFront=H('cd-front'), cdBack=H('cd-back'), cdCard=H('cd-card');
+    function allPairs(){
+      const out=[];
+      for(const [en,val] of Object.entries(DICT||{})){
+        if(typeof val!=='string') continue;
+        if(en.split(' ').length>2) continue;
+        if(!/^[a-z]/.test(en)) continue;
+        out.push([en, val]);
       }
-      updateMemInfo();
+      return out;
     }
-    function updateMemInfo(){ memInfo.textContent=`Pairs: ${memPairs}/${memTotal}`; }
-    function flipCard(el){
-      if(memLock || el.classList.contains('flipped')) return;
-      el.classList.add('flipped');
-      if(!memFirst){ memFirst=el; return; }
-      memLock=true;
-      const a=memFirst, b=el;
-      const ok = a.dataset.pair===b.dataset.pair && a!==b &&
-                 ((a.textContent!==b.textContent)); // разные стороны
-      setTimeout(()=>{
-        if(ok){ a.style.visibility=b.style.visibility='hidden'; memPairs++; confetti(memGrid, a); }
-        else  { a.classList.remove('flipped'); b.classList.remove('flipped'); }
-        memFirst=null; memLock=false; updateMemInfo();
-      }, 600);
+    function buildDeck(){
+      const dir = H('cd-dir').value; const size = +H('cd-size').value;
+      let pairs = allPairs();
+      // легкий приоритет: короткие/частотные слова
+      pairs.sort((a,b)=>a[0].length-b[0].length);
+      // перемешать и обрезать
+      for(let i=pairs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pairs[i],pairs[j]]=[pairs[j],pairs[i]]; }
+      pairs = pairs.slice(0, size);
+      deck = pairs.map(([en,ko]) => dir==='en2ko' ? {q:en,a:ko} : {q:ko,a:en});
+      known=0; idx=0; renderCard(true); updateStat();
     }
-    H('g-mem-new').addEventListener('click', newMemory);
-
-    /* -------- Games: Word Rain -------- */
-    const stage=H('g-rain-stage'), rainInput=H('g-rain-input'), sScore=H('g-rain-score'), sLife=H('g-rain-life');
-    let rainTimer=null, score=0, lives=3, drops=[];
-    function startRain(){
-      if(!DICT) return;
-      clearInterval(rainTimer); stage.innerHTML=''; drops=[]; score=0; lives=3; updateHUD();
-      rainInput.value=''; rainInput.focus();
-      rainTimer=setInterval(spawnDrop, 1200);
-      const fall=setInterval(()=>{ drops.forEach(d=>tickDrop(d)); prune(); if(lives<=0){clearInterval(fall); clearInterval(rainTimer); stage.insertAdjacentHTML('beforeend','<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:#0b1230;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);border-radius:16px;">Game Over</div>'); } }, 50);
+    function renderCard(resetFlip){
+      if(!deck.length){ cdFront.textContent='—'; cdBack.textContent='—'; return; }
+      const it = deck[idx];
+      cdFront.textContent = it.q; cdBack.textContent = it.a;
+      if(resetFlip) cdCard.classList.remove('flipped');
+      H('cd-pbar').style.width = Math.round((idx/deck.length)*100)+'%';
     }
-    function updateHUD(){ sScore.textContent='Score: '+score; sLife.textContent='Lives: '+lives; }
-    function pickWord(){
-      const keys=Object.keys(DICT).filter(k=>/^[a-z]/.test(k)&&typeof DICT[k]==='string'&&k.split(' ').length<=2);
-      return keys[Math.floor(Math.random()*keys.length)];
+    function updateStat(){ H('cd-stat').textContent = `${idx+1} / ${deck.length} · known: ${known}`; }
+    function flip(){ cdCard.classList.toggle('flipped'); }
+    function next(){ if(!deck.length) return; idx = Math.min(deck.length-1, idx+1); renderCard(true); updateStat(); }
+    function prev(){ if(!deck.length) return; idx = Math.max(0, idx-1); renderCard(true); updateStat(); }
+    function markKnown(k){ if(!deck.length) return;
+      if(k) known++; // простая статистика
+      next();
     }
-    function spawnDrop(){
-      const en=pickWord(), kom=DICT[en];
-      const x=20+Math.random()*(stage.clientWidth-40);
-      const el=document.createElement('div'); el.className='drop'; el.style.left=x+'px'; el.textContent=en;
-      stage.appendChild(el);
-      drops.push({el,en,kom,y:-36,speed:1.2+Math.random()*1.6});
-    }
-    function tickDrop(d){ d.y+=d.speed; d.el.style.top=d.y+'px'; if(d.y>stage.clientHeight-20){ // miss
-        lives--; stage.removeChild(d.el); d.dead=true; updateHUD(); if(lives>0) shake(stage);
-      }}
-    function prune(){ drops=drops.filter(d=>!d.dead); }
-    function shake(n){ n.style.transition='transform .1s'; n.style.transform='translateX(4px)'; setTimeout(()=>{n.style.transform='';},100); }
-    rainInput.addEventListener('keydown', e=>{
-      if(e.key==='Enter'){ const val=norm(rainInput.value); if(!val) return;
-        const hit=drops.find(d=>norm(d.kom)===val); if(hit){
-          hit.dead=true; try{stage.removeChild(hit.el);}catch{}
-          score+=10; confetti(stage, hit.el); updateHUD();
-        }
-        rainInput.value='';
-      }
+    function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; renderCard(true); updateStat(); }
+    // events
+    H('cd-new').addEventListener('click', buildDeck);
+    H('cd-shuffle').addEventListener('click', shuffleDeck);
+    H('cd-flip').addEventListener('click', flip);
+    H('cd-next').addEventListener('click', next);
+    H('cd-prev').addEventListener('click', prev);
+    H('cd-known').addEventListener('click', ()=>markKnown(true));
+    H('cd-unknown').addEventListener('click', ()=>markKnown(false));
+    cdCard.addEventListener('click', flip);
+    document.addEventListener('keydown', (e)=>{
+      if(tabs.cd.classList.contains('hidden')) return;
+      if(e.code==='Space'){e.preventDefault();flip();}
+      else if(e.key==='ArrowRight') next();
+      else if(e.key==='ArrowLeft') prev();
+      else if(e.key==='1') markKnown(true);
+      else if(e.key==='2') markKnown(false);
     });
-    function confetti(container, refEl){
-      const rect=(refEl&&refEl.getBoundingClientRect?refEl.getBoundingClientRect():container.getBoundingClientRect());
-      for(let i=0;i<16;i++){
-        const c=document.createElement('div'); c.className='confetti';
-        c.style.left=(rect.left + rect.width/2 - container.getBoundingClientRect().left)+'px';
-        c.style.top=(rect.top + 10 - container.getBoundingClientRect().top)+'px';
-        c.style.background=['#16a34a','#0ea5e9','#ffd166','#ef4444'][i%4];
-        container.appendChild(c);
-        const dx=(Math.random()*2-1)*120, dy=120+Math.random()*60, rot=(Math.random()*360)+'deg';
-        c.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${dx}px, ${dy}px) rotate(${rot})`,opacity:0}],{duration:900+Math.random()*400,fill:'forwards'});
-        setTimeout(()=>c.remove(),1300);
-      }
-    }
-    H('g-rain-start').addEventListener('click', startRain);
 
     /* boot */
-    loadAll();
+    loadAll().then(()=>buildDeck());
   </script>
 </body></html>
+
 
