@@ -1,0 +1,34 @@
+{
+  "quiz": [
+    {
+      "q": "How to say “Hello (formal)” in Komi?",
+      "options": [
+        "Видза оланыд",
+        "Чолӧн",
+        "Бурай",
+        "Йӧн вон"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Pick the Komi word for “Good morning”.",
+      "options": [
+        "Бур асыва",
+        "Видзöд",
+        "Джö",
+        "Тэ"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "How to say “Thank you” in Komi?",
+      "options": [
+        "Бурай",
+        "Ӧскöл",
+        "Тӧдмӧс",
+        "Нöм"
+      ],
+      "answer": 0
+    }
+  ]
+}
