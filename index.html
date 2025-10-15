@@ -1,11 +1,94 @@
 <!doctype html>
-<html lang="en"><head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Komi widgets — Translator</title>
-  <link rel="stylesheet" href="./widgets/komi-theme.css"/>
-</head><body>
-  <div class="wrap"><h1 class="brand">Komi widgets <span class="v">Translator</span></h1><div id="tabs"></div></div>
-  <script src="./widgets/komi-tabs.js"></script>
-  <script src="./widgets/komi-translate.js"></script>
-  <script>KomiTabs.mount('#tabs',{widgetsBaseUrl:'./widgets/',dataBaseUrl:'./data/'});</script>
-</body></html>
+  <style>
+    :root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+         background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
+    .brand{font-size:28px;margin:0 0 12px;font-weight:900}
+    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
+              background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
+    .title{font-size:20px;font-weight:800;margin-bottom:2px}
+    .sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+    .btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+    .txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
+    .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
+    .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1 class="brand">Komi widgets <span class="v">Translator</span></h1>
+    <div class="card">
+      <div class="title">English → Komi Translator (beta)</div>
+      <div class="sub">Type a word or a short phrase in English. This translator returns Komi text.</div>
+      <textarea id="src" class="txt" rows="3" placeholder="Type here..."></textarea>
+      <div class="row" style="margin-top:.6rem">
+        <button id="do" class="btn primary">Translate</button>
+        <span id="hint" class="badge">loading…</span>
+      </div>
+      <div id="out" class="out"></div>
+    </div>
+  </div>
+
+  <script>
+    // --- helpers ---
+    const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
+    const toks = s => norm(s).split(' ').filter(Boolean);
+    function mapLongest(tokens, dict, n=4){
+      const out=[], unk=[]; let i=0;
+      while(i<tokens.length){
+        let hit=null,k=0;
+        for(let m=Math.min(n,tokens.length-i); m>=1; m--){
+          const p=tokens.slice(i,i+m).join(' ');
+          if(dict[p]!==undefined){hit=dict[p];k=m;break;}
+        }
+        if(hit!==null){ out.push(hit); i+=k; }
+        else { out.push({__u:tokens[i]}); unk.push(tokens[i]); i++; }
+      }
+      return {out, unk};
+    }
+    // transliteration fallback EN->"komi-like" cyrillic
+    const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
+    const map={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к",
+               "l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в",
+               "w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
+    function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b) } let o=""; for(const ch of s){ o+=map[ch]??ch } return o; }
+    function finalize(chunks){ const parts=[]; for(const c of chunks){ if(typeof c==='string') parts.push(c); else if(c&&c.__u) parts.push(translit(c.__u)); } return parts.join(' ').replace(/\s+/g,' ').trim(); }
+
+    const H = id => document.getElementById(id);
+    let DICT = null;
+
+    async function boot(){
+      try{
+        const resp = await fetch('./data/dictionary.json',{cache:'no-store'});
+        DICT = await resp.json();
+        H('hint').textContent = 'ready';
+      }catch(e){
+        H('hint').textContent = 'dictionary not found';
+        console.error('Dictionary load error', e);
+      }
+    }
+
+    function translate(){
+      if(!DICT){ H('hint').textContent = 'dictionary not found'; return; }
+      const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
+      H('out').textContent = finalize(out);
+      H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
+    }
+
+    H('do').addEventListener('click', translate);
+    H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
+
+    boot();
+  </script>
+</body>
+</html>
