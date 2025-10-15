@@ -1,0 +1,7 @@
+{
+  "maxChars": 200,
+  "unknownHint": "Попробуйте более простую фразу и короче слова.",
+  "joiner": " ",
+  "lowercase": true,
+  "stripPunctuation": true
+}

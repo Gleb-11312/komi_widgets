@@ -1,0 +1,172 @@
+{
+  "alphabet": {
+    "letters": [
+      {
+        "char": "А а",
+        "name": "A a"
+      },
+      {
+        "char": "Б б",
+        "name": "B b"
+      },
+      {
+        "char": "В в",
+        "name": "V v"
+      },
+      {
+        "char": "Г г",
+        "name": "G g"
+      },
+      {
+        "char": "Д д",
+        "name": "D d"
+      },
+      {
+        "char": "Е е",
+        "name": "E e"
+      },
+      {
+        "char": "Ё ё",
+        "name": "Yo yo"
+      },
+      {
+        "char": "Ж ж",
+        "name": "Zh zh"
+      },
+      {
+        "char": "З з",
+        "name": "Z z"
+      },
+      {
+        "char": "И и",
+        "name": "I i"
+      },
+      {
+        "char": "І і",
+        "name": "I (долг.)"
+      },
+      {
+        "char": "Й й",
+        "name": "Y y"
+      },
+      {
+        "char": "К к",
+        "name": "K k"
+      },
+      {
+        "char": "Л л",
+        "name": "L l"
+      },
+      {
+        "char": "М м",
+        "name": "M m"
+      },
+      {
+        "char": "Н н",
+        "name": "N n"
+      },
+      {
+        "char": "О о",
+        "name": "O o"
+      },
+      {
+        "char": "Ӧ ӧ",
+        "name": "Ö ö"
+      },
+      {
+        "char": "П п",
+        "name": "P p"
+      },
+      {
+        "char": "Р р",
+        "name": "R r"
+      },
+      {
+        "char": "С с",
+        "name": "S s"
+      },
+      {
+        "char": "Т т",
+        "name": "T t"
+      },
+      {
+        "char": "У у",
+        "name": "U u"
+      },
+      {
+        "char": "Ф ф",
+        "name": "F f"
+      },
+      {
+        "char": "Х х",
+        "name": "Kh kh"
+      },
+      {
+        "char": "Ц ц",
+        "name": "Ts ts"
+      },
+      {
+        "char": "Ч ч",
+        "name": "Ch ch"
+      },
+      {
+        "char": "Ӵ ӵ",
+        "name": "Ç ç (tʃʲ)"
+      },
+      {
+        "char": "Ш ш",
+        "name": "Sh sh"
+      },
+      {
+        "char": "Щ щ",
+        "name": "Sch sch"
+      },
+      {
+        "char": "Ъ ъ",
+        "name": "ъ"
+      },
+      {
+        "char": "Ы ы",
+        "name": "Y y"
+      },
+      {
+        "char": "Ь ь",
+        "name": "ь"
+      },
+      {
+        "char": "Э э",
+        "name": "E e"
+      },
+      {
+        "char": "Ю ю",
+        "name": "Yu yu"
+      },
+      {
+        "char": "Я я",
+        "name": "Ya ya"
+      }
+    ]
+  },
+  "quiz": [
+    {
+      "q": "Как будет «привет» на коми?",
+      "options": [
+        "салют",
+        "видзöд",
+        "бурай",
+        "ӧскöл"
+      ],
+      "answer": 0
+    },
+    {
+      "q": "Выберите слово «я»",
+      "options": [
+        "тэ",
+        "ме",
+        "нöм",
+        "кыв"
+      ],
+      "answer": 1
+    }
+  ]
+}
