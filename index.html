@@ -133,7 +133,6 @@
   <div class="scene" aria-hidden="true">
     <div class="aurora"></div>
     <div class="ground"></div>
-    <!-- простой «нормальный» медведь (SVG) -->
     <svg class="bear" viewBox="0 0 700 360" xmlns="http://www.w3.org/2000/svg">
       <path fill="#c6d2dd" d="M170 250c20 40 75 60 138 58 96-3 156-64 214-61 32 2 60 24 72 21 11-3 15-19 9-30-4-7-10-12-18-16 9-8 14-17 12-27-3-14-19-23-38-22-18 1-36 9-52 22-12-25-36-58-86-73-63-19-123 1-170 26-21 12-34 8-55-6-12-8-27-14-36-8-9 6-9 18 2 26 16 12 32 13 45 22-31 17-43 43-37 68z"/>
       <circle cx="510" cy="180" r="6" fill="#0b1230"/>
@@ -172,40 +171,104 @@
     function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
     function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
 
-    /* -------- dictionary load (base + overlays) -------- */
-    let DICT=null;
+    /* -------- dictionary globals -------- */
+    let DICT=null;   // EN->Komi прямой (и overlays)
+    let ENRU=null;   // EN->RU мост
+    let RUKO=null;   // RU->Komi мост
+
+    /* -------- dictionary load (base + overlays + bridge) -------- */
     async function loadAll(){
+      // 1) прямой словарь + overlays
       const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
       let dict = {...base};
       const overlayNames=[...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),'overlay_verbs_1.json','overlay_verbs_2.json'];
       for(const name of overlayNames){
-        try{const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'}); if(res.ok){Object.assign(dict, await res.json());}}catch(e){}
+        try{
+          const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'});
+          if(res.ok){ Object.assign(dict, await res.json()); }
+        }catch(e){}
       }
-      /* авто-формы */
+
+      // немного автоспряжений (только если базовая лемма есть в прямом словаре)
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
       const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
-      verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
-      const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
-      const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-      nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
-      DICT=dict;
-      H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
+      verbs.forEach(v=>{ [v,third(v),past(v),ing(v)].forEach(f=>{ if(f && dict[v]) dict[f]=dict[v]; }); });
+
+      DICT = dict;
+
+      // 2) подгрузим мосты EN->RU и RU->Komi
+      try{ ENRU = await fetch('./data/en_ru.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ ENRU=null; }
+      try{ RUKO = await fetch('./data/ru_komi.json',{cache:'no-store'}).then(r=>r.ok?r.json():null); }catch(e){ RUKO=null; }
+
+      H('hint').textContent='Ready ('+Object.keys(DICT).length+' direct; bridge '+
+        (ENRU?Object.keys(ENRU).length:0)+'/'+(RUKO?Object.keys(RUKO).length:0)+')';
+    }
+
+    // Пробуем скрытый транзит EN -> RU -> Komi
+    function bridgeTranslate(enTokens){
+      if(!ENRU || !RUKO) return {text:'', unk:[]};
+
+      // шаг 1: EN -> RU
+      const ru1 = mapLongest(enTokens, ENRU, 4);
+      const ruPieces = [];
+      for(const piece of ru1.out){
+        if(typeof piece==='string'){ ruPieces.push(...toks(piece)); }
+        else if(piece && piece.__u){ ruPieces.push(piece.__u); }
+      }
+
+      // шаг 2: RU -> Komi
+      const ko = mapLongest(ruPieces, RUKO, 4);
+      const text = finalize(ko.out);
+      return {text, unk:[...new Set(ru1.unk.concat(ko.unk))]};
     }
 
     /* -------- Translator -------- */
     function translate(){
-      if(!DICT){H('hint').textContent='Dictionary not found';return;}
-      const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
-      H('out').textContent = finalize(out);
-      H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
+      if(!DICT){ H('hint').textContent='Dictionary not found'; return; }
+
+      const tokens = toks(H('src').value);
+
+      // Вариант А: прямой EN->Komi
+      const directRes = mapLongest(tokens, DICT, 4);
+      const directText = finalize(directRes.out);
+      const directUnk  = new Set(directRes.unk);
+
+      // Вариант B: скрытый EN->RU->Komi
+      const bridgeRes = bridgeTranslate(tokens);  // {text, unk}
+      const bridgeUnk = new Set(bridgeRes.unk||[]);
+
+      // Выбираем лучший вариант
+      let bestText, bestUnk;
+      if(bridgeUnk.size < directUnk.size || (bridgeUnk.size===directUnk.size && (bridgeRes.text||'').length > (directText||'').length)){
+        bestText = bridgeRes.text || directText;
+        bestUnk  = bridgeUnk;
+      }else{
+        bestText = directText;
+        bestUnk  = directUnk;
+      }
+
+      H('out').textContent = bestText;
+      H('hint').textContent = bestUnk.size ? ('Unknown: ' + [...bestUnk].join(', ')) : 'OK';
     }
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
     /* -------- Assistant -------- */
-    function toKomi(text){ const {out}=mapLongest(toks(text), DICT||{}, 4); return finalize(out); }
+    function toKomi(text){
+      const tokens = toks(text);
+      // берём тот же «лучший вариант», что и в переводчике
+      const directRes = mapLongest(tokens, DICT||{}, 4);
+      const directText = finalize(directRes.out);
+      const bridgeRes = bridgeTranslate(tokens);
+      const directUnk = new Set(directRes.unk||[]);
+      const bridgeUnk = new Set(bridgeRes.unk||[]);
+      if(bridgeUnk.size < directUnk.size || (bridgeUnk.size===directUnk.size && (bridgeRes.text||'').length > (directText||'').length)){
+        return bridgeRes.text || directText;
+      }
+      return directText;
+    }
     const status = t => H('as-status').textContent=t;
     const setScore = v => H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
     function speakKomi(text){
@@ -244,9 +307,7 @@
     function buildDeck(){
       const dir = H('cd-dir').value; const size = +H('cd-size').value;
       let pairs = allPairs();
-      // легкий приоритет: короткие/частотные слова
       pairs.sort((a,b)=>a[0].length-b[0].length);
-      // перемешать и обрезать
       for(let i=pairs.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [pairs[i],pairs[j]]=[pairs[j],pairs[i]]; }
       pairs = pairs.slice(0, size);
       deck = pairs.map(([en,ko]) => dir==='en2ko' ? {q:en,a:ko} : {q:ko,a:en});
@@ -263,12 +324,8 @@
     function flip(){ cdCard.classList.toggle('flipped'); }
     function next(){ if(!deck.length) return; idx = Math.min(deck.length-1, idx+1); renderCard(true); updateStat(); }
     function prev(){ if(!deck.length) return; idx = Math.max(0, idx-1); renderCard(true); updateStat(); }
-    function markKnown(k){ if(!deck.length) return;
-      if(k) known++; // простая статистика
-      next();
-    }
+    function markKnown(k){ if(!deck.length) return; if(k) known++; next(); }
     function shuffleDeck(){ for(let i=deck.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [deck[i],deck[j]]=[deck[j],deck[i]]; } idx=0; renderCard(true); updateStat(); }
-    // events
     H('cd-new').addEventListener('click', buildDeck);
     H('cd-shuffle').addEventListener('click', shuffleDeck);
     H('cd-flip').addEventListener('click', flip);
