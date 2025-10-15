@@ -1,7 +1,7 @@
 
 ;(function(){
   function mount(sel, opts){
-    const el=document.querySelector(sel); if(!el) return;
+    const el=(typeof sel==='string')?document.querySelector(sel):sel; if(!el) return;
     const base=(opts?.widgetsBaseUrl||'./widgets/');
     el.innerHTML = `<link rel="stylesheet" href="${base+'komi-theme.css'}"/>
       <div class="komi-tabs">
@@ -13,14 +13,14 @@
       <div class="tab assistant" style="display:none"></div>
       <div class="tab games" style="display:none"></div>`;
     const $t=el.querySelector('.translator'), $a=el.querySelector('.assistant'), $g=el.querySelector('.games');
-    // Mount sub-widgets
-    KomiTranslator.mount($t, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base, audioBaseUrl: opts?.audioBaseUrl||'./audio/', strictUnknown: 'drop' });
-    KomiAssistant.mount($a, { widgetsBaseUrl: base });
-    // Games: quiz + scramble
-    const quiz = document.createElement('div'); const scramble = document.createElement('div'); $g.appendChild(quiz); $g.appendChild(scramble);
-    KomiQuiz.mount(quiz, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base });
-    KomiScramble.mount(scramble, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base });
-    // Tab switching
+    // Mount sub-widgets with ELEMENT targets (works in v4.1)
+    if(window.KomiTranslator) KomiTranslator.mount($t, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base, audioBaseUrl: opts?.audioBaseUrl||'./audio/', strictUnknown: 'drop' });
+    if(window.KomiAssistant) KomiAssistant.mount($a, { widgetsBaseUrl: base });
+    if(window.KomiQuiz && window.KomiScramble){
+      const quiz = document.createElement('div'); const scramble = document.createElement('div'); $g.appendChild(quiz); $g.appendChild(scramble);
+      KomiQuiz.mount(quiz, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base });
+      KomiScramble.mount(scramble, { dataBaseUrl: opts?.dataBaseUrl||'./data/', widgetsBaseUrl: base });
+    }
     el.querySelectorAll('.komi-tab').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         el.querySelectorAll('.komi-tab').forEach(b=>b.classList.remove('active')); btn.classList.add('active');

@@ -1,8 +1,15 @@
 
 ;(function(){
+  function _el(target){
+    if(!target) return null;
+    if(typeof target === 'string') return document.querySelector(target);
+    if(target instanceof Element) return target;
+    return null;
+  }
+
   async function j(u){ const r=await fetch(u); return r.json(); }
-  function mount(sel, opts){
-    const el=document.querySelector(sel); if(!el) return;
+  function mount(target, opts){
+    const el=_el(target); if(!el) return;
     const base=(opts?.widgetsBaseUrl||'./widgets/');
     el.innerHTML = `<link rel="stylesheet" href="${base+'komi-theme.css'}"/><div class="komi-card">
       <div style="display:flex;justify-content:space-between;align-items:center"><b>Mini-quiz</b><span class="stat komi-muted"></span></div>
@@ -23,4 +30,5 @@
     });
   }
   window.KomiQuiz = { mount };
+
 })();

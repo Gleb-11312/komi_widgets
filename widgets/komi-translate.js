@@ -1,5 +1,12 @@
 
 ;(function(){
+  function _el(target){
+    if(!target) return null;
+    if(typeof target === 'string') return document.querySelector(target);
+    if(target instanceof Element) return target;
+    return null;
+  }
+
   async function loadJSON(u){ const r=await fetch(u); return r.json(); }
   const norm = s => s.toLowerCase().replace(/[.,!?;:()"“”]/g,' ').replace(/\s+/g,' ').trim();
   const toks = s => norm(s).split(' ').filter(Boolean);
@@ -22,8 +29,8 @@
     }
     return parts.join(' ').replace(/\s+/g,' ').trim();
   }
-  async function mount(sel, opts){
-    const el=document.querySelector(sel); if(!el) return;
+  async function mount(target, opts){
+    const el=_el(target); if(!el) return;
     const dataBase=opts?.dataBaseUrl||'./data/';
     const [enru, rukomi, amap]= await Promise.all([
       loadJSON(dataBase+'en_ru.json'), loadJSON(dataBase+'ru_komi.json'), loadJSON(dataBase+'audio_map.json').catch(()=>({}))
@@ -62,4 +69,5 @@
     });
   }
   window.KomiTranslator = { mount };
+
 })();

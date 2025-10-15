@@ -1,13 +1,20 @@
 
 ;(function(){
+  function _el(target){
+    if(!target) return null;
+    if(typeof target === 'string') return document.querySelector(target);
+    if(target instanceof Element) return target;
+    return null;
+  }
+
   const SCRIPT = [
     { user:"Say hello", bot:"Видза оланыд!" },
     { user:"Good morning", bot:"Бур асыва!" },
     { user:"How are you?", bot:"Йӧна! А тэ кыдзи?" },
     { user:"Thank you", bot:"Бурай!" }
   ];
-  function mount(sel, opts){
-    const el=document.querySelector(sel); if(!el) return;
+  function mount(target, opts){
+    const el=_el(target); if(!el) return;
     const base=(opts?.widgetsBaseUrl||'./widgets/');
     el.innerHTML = `<link rel="stylesheet" href="${base+'komi-theme.css'}"/>
     <div class="komi-card">
@@ -24,7 +31,6 @@
       const b=document.createElement('div'); b.textContent=text; b.className='komi-btn'; b.style.background= role==='user'?'#d1fae5':'#fff';
       row.appendChild(b); $log.appendChild(row); $log.scrollTop=$log.scrollHeight;
     }
-    // intro
     push('bot',"Hello! I can translate and speak short Komi phrases. I'm still in development.");
     SCRIPT.forEach(s=>{
       const b=document.createElement('button'); b.className='komi-btn'; b.textContent=s.user;
@@ -33,4 +39,5 @@
     });
   }
   window.KomiAssistant = { mount };
+
 })();
