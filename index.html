@@ -1,71 +1,179 @@
 <!doctype html>
 <html lang="en"><head>
   <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Komi widgets — Translator & Assistant</title>
+  <title>Komi widgets — Translator · Assistant · Games</title>
   <style>
-    :root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-    background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh} .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
-    .brand{font-size:28px;margin:0 0 12px;font-weight:900}.brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem}.tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+    :root{
+      --bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;
+      --accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)
+    }
+    *{box-sizing:border-box}
+    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh;position:relative;padding-bottom:220px}
+    .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
+    .brand{font-size:28px;margin:0 0 12px;font-weight:900}
+    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem;flex-wrap:wrap}
+    .tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
     .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
     .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
     .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
-    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
+    .btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
+    .btn[disabled]{opacity:.6;cursor:not-allowed}
+    .txt,textarea.txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
     .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
     .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
-    .hint{font-size:12px;color:var(--muted)} .hidden{display:none}
+    .hint{font-size:12px;color:var(--muted)}
+    .hidden{display:none}
     .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
     .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+
+    /* Games */
+    .grid{display:grid;grid-template-columns:repeat(3,minmax(120px,1fr));gap:10px}
+    .cardgame{height:110px;display:flex;align-items:center;justify-content:center;border-radius:14px;border:1px solid var(--border);
+      background:#fff;cursor:pointer;transform-style:preserve-3d;transition:transform .35s}
+    .cardgame.flipped{transform:rotateY(180deg)}
+    .cardgame .face{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;border-radius:14px;backface-visibility:hidden}
+    .cardgame .back{background:linear-gradient(135deg,#d7eefc,#f1faff);border:1px dashed #c6d9ea}
+    .cardgame .front{transform:rotateY(180deg);font-weight:800;font-size:18px}
+    .panel{display:flex;gap:10px;align-items:center;margin:.5rem 0 .75rem}
+
+    /* Word rain */
+    .rain-stage{position:relative;height:280px;border-radius:16px;border:1px solid var(--border);background:#f8fbff;overflow:hidden}
+    .drop{position:absolute;top:-36px;left:0;transform:translateX(-50%);padding:.35rem .6rem;background:#fff;border:1px solid var(--border);
+      border-radius:10px;box-shadow:0 10px 20px rgba(0,0,0,.05)}
+    .confetti{position:absolute;width:6px;height:10px;pointer-events:none}
+
+    /* Animated footer scene (waving Komi flag + bear walking) */
+    .scene{position:fixed;left:0;right:0;bottom:0;height:200px;pointer-events:none}
+    .scene-inner{position:absolute;inset:0}
+    .forest{position:absolute;inset:auto 0 0 0;height:140px;background:
+        linear-gradient(#0d1b2a,#0d1b2a) bottom/100% 50px no-repeat,
+        url('data:image/svg+xml;utf8,\
+<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"800\" height=\"140\" viewBox=\"0 0 800 140\">\
+<g fill=\"%230b3a2e\" opacity=\".25\">\
+<path d=\"M0,120 L50,100 L80,120 L120,90 L160,120 L200,95 L240,120 L280,100 L320,120 L360,90 L400,120 L440,100 L480,120 L520,95 L560,120 L600,100 L640,120 L680,90 L720,120 L760,100 L800,120 L800,140 L0,140 Z\"/>\
+</g></svg>') center bottom/1600px 140px repeat-x;
+      animation:forest 30s linear infinite}
+    @keyframes forest{to{background-position:0 0, -1600px 0}}
+
+    .bear{position:absolute;bottom:40px;left:-220px;width:180px;opacity:.9;animation:bearwalk 18s linear infinite}
+    @keyframes bearwalk{to{transform:translateX(120vw)}}
+    .flag{position:absolute;right:8%;bottom:98px;width:220px;filter:drop-shadow(0 10px 20px rgba(0,0,0,.15))}
+    .flag svg{width:100%;height:auto}
   </style>
 </head>
 <body>
   <div class="wrap">
-    <h1 class="brand">Komi widgets <span class="v">Translator & Assistant</span></h1>
+    <h1 class="brand">Komi widgets <span class="v">Translator · Assistant · Games</span></h1>
 
     <div class="tabs">
       <button class="tab-btn active" data-tab="tr">Translator</button>
       <button class="tab-btn" data-tab="as">Assistant</button>
+      <button class="tab-btn" data-tab="gm">Games</button>
     </div>
 
+    <!-- Translator -->
     <div id="tab-tr" class="card">
       <div class="title">English → Komi Translator (beta)</div>
       <div class="sub">Type a word or a short phrase in English. This translator returns Komi text.</div>
       <textarea id="src" class="txt" rows="3" placeholder="Type here..."></textarea>
       <div class="row" style="margin-top:.6rem">
         <button id="do" class="btn primary">Translate</button>
-        <span id="hint" class="badge">loading…</span>
+        <span id="hint" class="badge">Loading…</span>
       </div>
       <div id="out" class="out"></div>
     </div>
 
+    <!-- Assistant -->
     <div id="tab-as" class="card hidden">
       <div class="title">Assistant (Speak Komi)</div>
-      <div class="sub">Enter an English word/phrase — we translate to Komi, play it in Komi, then you repeat and get a score.</div>
+      <div class="sub">We translate to Komi, play it in Komi, then you repeat and get a score.</div>
       <input id="as-text" class="txt" placeholder="Type an English word… e.g. hello" />
       <div class="row" style="margin-top:.6rem">
         <button id="as-say" class="btn">Play Komi</button>
         <button id="as-record" class="btn primary">Record & Check (ru-RU)</button>
-        <span id="as-status" class="badge">idle</span>
+        <span id="as-status" class="badge">Ready</span>
       </div>
       <div class="meter"><div id="as-bar" class="bar"></div></div>
       <div class="hint" id="as-hint"></div>
     </div>
+
+    <!-- Games -->
+    <div id="tab-gm" class="card hidden">
+      <div class="title">Games</div>
+      <div class="sub">Two small animated games powered by your dictionary.</div>
+
+      <!-- Memory -->
+      <div class="panel">
+        <button id="g-mem-new" class="btn primary">New Memory Match</button>
+        <span id="g-mem-info" class="badge">Pairs: 0/0</span>
+      </div>
+      <div id="g-mem-grid" class="grid" aria-live="polite"></div>
+
+      <!-- Word Rain -->
+      <hr style="border:none;height:1px;background:var(--border);margin:18px 0">
+      <div class="panel">
+        <button id="g-rain-start" class="btn primary">Start Word Rain</button>
+        <span id="g-rain-score" class="badge">Score: 0</span>
+        <span id="g-rain-life" class="badge">Lives: 3</span>
+      </div>
+      <div class="rain-stage" id="g-rain-stage"></div>
+      <input id="g-rain-input" class="txt" placeholder="Type Komi translation here and press Enter" />
+    </div>
+  </div>
+
+  <!-- Animated footer scene -->
+  <div class="scene" aria-hidden="true">
+    <div class="scene-inner">
+      <div class="forest"></div>
+      <!-- Bear silhouette -->
+      <svg class="bear" viewBox="0 0 640 360" xmlns="http://www.w3.org/2000/svg">
+        <path d="M82 262c8 31 47 50 96 50 88 0 172-64 220-55 38 8 66 36 88 31 17-3 24-23 17-38-5-12-17-21-29-26 12-8 20-21 17-34-4-17-25-26-45-22-18 4-34 15-46 29-16-26-39-49-75-61-51-17-99-3-141 17-21 10-35 2-55-13-11-8-26-14-36-8-12 7-10 25 3 34 19 13 39 13 53 25-29 16-41 38-36 71z"
+              fill="#0b3a2e" opacity=".9"/>
+      </svg>
+      <!-- Waving Komi flag (green–white–blue) -->
+      <div class="flag">
+        <svg viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="komi1" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#198754"/>
+              <stop offset="0.34" stop-color="#198754"/>
+              <stop offset="0.34" stop-color="#ffffff"/>
+              <stop offset="0.67" stop-color="#ffffff"/>
+              <stop offset="0.67" stop-color="#1e90ff"/>
+              <stop offset="1" stop-color="#1e90ff"/>
+            </linearGradient>
+            <filter id="wave">
+              <feTurbulence baseFrequency="0.012 0.18" numOctaves="2" seed="3" result="turb"/>
+              <feDisplacementMap in="SourceGraphic" in2="turb" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+              <animate xlink:href="#turb" attributeName="seed" from="3" to="33" dur="12s" repeatCount="indefinite"/>
+            </filter>
+          </defs>
+          <rect x="0" y="0" width="300" height="180" rx="9" fill="url(#komi1)" filter="url(#wave)"/>
+        </svg>
+      </div>
+    </div>
   </div>
 
   <script>
-    const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
+    /* ----------- tabs ----------- */
+    const tabs={tr:document.getElementById('tab-tr'),as:document.getElementById('tab-as'),gm:document.getElementById('tab-gm')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
       document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
       b.classList.add('active');
       tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
       tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
+      tabs.gm.classList.toggle('hidden', b.dataset.tab!=='gm');
     }));
 
-    const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
-    const toks = s => norm(s).split(' ').filter(Boolean);
+    /* -------- utils -------- */
+    const H=id=>document.getElementById(id);
+    const norm=s=>(s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
+    const toks=s=>norm(s).split(' ').filter(Boolean);
     function mapLongest(tokens, dict, n=4){
       const out=[], unk=[]; let i=0;
       while(i<tokens.length){
@@ -75,26 +183,27 @@
           if(dict[p]!==undefined){hit=dict[p];k=m;break;}
         }
         if(hit!==null){out.push(hit);i+=k;} else {out.push({__u:tokens[i]});unk.push(tokens[i]);i++;}
-      } return {out,unk};
+      }
+      return {out,unk};
     }
     const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
     const cmap={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
     function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
     function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
-    const H=id=>document.getElementById(id);
-    let DICT=null;
 
+    /* -------- dictionary load (base + overlays) -------- */
+    let DICT=null;
     async function loadAll(){
       const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
       let dict = {...base};
-      // auto-load overlays overlay_1..overlay_5.json if present
-      for(let i=1;i<=5;i++){
-        try{
-          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
-          dict = {...dict, ...ov};
-        }catch(e){/* overlay may be missing, skip */}
+      const overlayNames=[
+        ...Array.from({length:30},(_,i)=>`overlay_${i+1}.json`),
+        'overlay_verbs_1.json','overlay_verbs_2.json'
+      ];
+      for(const name of overlayNames){
+        try{const res=await fetch(`./data/overlays/${name}`,{cache:'no-store'}); if(res.ok){Object.assign(dict, await res.json());}}catch(e){}
       }
-      // expand forms
+      /* быстрые формы (неск. глаголов и мн.ч) */
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
@@ -103,12 +212,13 @@
       const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
       const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
-      DICT = dict;
-      H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
+      DICT=dict;
+      H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
     }
 
+    /* -------- Translator -------- */
     function translate(){
-      if(!DICT){H('hint').textContent='dictionary not found';return;}
+      if(!DICT){H('hint').textContent='Dictionary not found';return;}
       const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
       H('out').textContent = finalize(out);
       H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
@@ -116,48 +226,121 @@
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
-    // Assistant: speak & rate Komi
-    function toKomi(text){
-      const {out} = mapLongest(toks(text), DICT||{}, 4);
-      return finalize(out);
-    }
-    const status = t=> H('as-status').textContent=t;
-    const setScore = v=> H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
+    /* -------- Assistant -------- */
+    function toKomi(text){ const {out}=mapLongest(toks(text), DICT||{}, 4); return finalize(out); }
+    const status = t => H('as-status').textContent=t;
+    const setScore = v => H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
     function speakKomi(text){
-      const u=new SpeechSynthesisUtterance(text);
-      u.lang='ru-RU'; u.rate=0.95;
-      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null;
-      if(pick) u.voice=pick;
+      const u=new SpeechSynthesisUtterance(text); u.lang='ru-RU'; u.rate=0.95;
+      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null; if(pick) u.voice=pick;
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
-    function dist(a,b){
-      a=a.toLowerCase(); b=b.toLowerCase();
-      const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
-      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){ m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1)); } }
-      return m[a.length][b.length];
-    }
-    function scoreRef(rec, ref){ const d=dist(rec,ref); const max=Math.max(ref.length,1); const s=Math.round(100*(1-d/max)); return Math.max(0,Math.min(100,s)); }
-
-    document.getElementById('as-say').addEventListener('click', ()=>{
-      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
-      const kom = toKomi(en);
-      speakKomi(kom);
-      status('Repeat in Komi: "'+kom+'"');
-    });
-
-    document.getElementById('as-record').addEventListener('click', ()=>{
-      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
-      const target = toKomi(en);
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-      if(!SR){ status('speech recognition not supported'); return; }
+    function dist(a,b){a=a.toLowerCase();b=b.toLowerCase();const m=[];for(let i=0;i<=a.length;i++){m[i]=[i]}for(let j=1;j<=b.length;j++)m[0][j]=j;
+      for(let i=1;i<=a.length;i++){for(let j=1;j<=b.length;j++){m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));}}return m[a.length][b.length];}
+    function scoreRef(rec,ref){const d=dist(rec,ref);const max=Math.max(ref.length,1);const s=Math.round(100*(1-d/max));return Math.max(0,Math.min(100,s));}
+    H('as-say').addEventListener('click', ()=>{const en=(H('as-text').value||'').trim(); if(!en) return; const kom=toKomi(en); speakKomi(kom); status('Repeat in Komi: "'+kom+'"');});
+    H('as-record').addEventListener('click', ()=>{
+      const en=(H('as-text').value||'').trim(); if(!en) return; const target=toKomi(en);
+      const SR=window.SpeechRecognition||window.webkitSpeechRecognition; if(!SR){ status('Mic error: not supported'); return; }
       const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
-      status('listening…'); setScore(0);
-      rec.onresult=(e)=>{ const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,target); setScore(s); status('score: '+s+' / 100'); H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"'; };
-      rec.onerror =(e)=>{ status('mic error'); console.error(e); };
-      rec.onend   =()=>{ if(document.getElementById('as-status').textContent==='listening…') status('idle'); };
-      rec.start();
+      status('Listening…'); H('as-record').disabled=true; setScore(0); H('as-hint').textContent='';
+      rec.onresult=(e)=>{const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,target); setScore(s); status('Score: '+s+' / 100'); H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';};
+      rec.onerror =(e)=>{ status('Mic error: ' + (e.error || 'unknown')); console.error('SpeechRecognition error:', e);};
+      rec.onend   =()=>{ if(H('as-status').textContent==='Listening…') status('Ready'); H('as-record').disabled=false; };
+      try{ rec.start(); }catch(err){ status('Mic error: start failed'); H('as-record').disabled=false; }
     });
 
+    /* -------- Games: Memory Match -------- */
+    const memGrid=H('g-mem-grid'), memInfo=H('g-mem-info'); let memLock=false, memFirst=null, memPairs=0, memTotal=0;
+    function samplePairs(n=6){
+      const keys=Object.keys(DICT||{}).filter(k=>/^[a-z]/.test(k)&&typeof DICT[k]==='string');
+      const pick=[]; while(pick.length<n && keys.length){ const i=Math.floor(Math.random()*keys.length); const en=keys.splice(i,1)[0]; pick.push([en, DICT[en]]); }
+      return pick;
+    }
+    function newMemory(){
+      if(!DICT) return; memGrid.innerHTML=''; memLock=false; memFirst=null; memPairs=0;
+      const pairs = samplePairs(6); memTotal=pairs.length;
+      const cards=[];
+      pairs.forEach(([en,kom],i)=>{ cards.push({id:`en${i}`,front:en,type:'en',pair:i}); cards.push({id:`ko${i}`,front:kom,type:'ko',pair:i}); });
+      for(let i=cards.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[cards[i],cards[j]]=[cards[j],cards[i]];}
+      for(const c of cards){
+        const el=document.createElement('div'); el.className='cardgame'; el.dataset.id=c.id; el.dataset.pair=c.pair;
+        el.innerHTML=`<div class="face back">?</div><div class="face front">${c.front}</div>`;
+        el.addEventListener('click', ()=>flipCard(el));
+        memGrid.appendChild(el);
+      }
+      updateMemInfo();
+    }
+    function updateMemInfo(){ memInfo.textContent=`Pairs: ${memPairs}/${memTotal}`; }
+    function flipCard(el){
+      if(memLock || el.classList.contains('flipped')) return;
+      el.classList.add('flipped');
+      if(!memFirst){ memFirst=el; return; }
+      memLock=true;
+      const a=memFirst, b=el;
+      const ok = a.dataset.pair===b.dataset.pair && a!==b &&
+                 ((a.textContent!==b.textContent)); // разные стороны
+      setTimeout(()=>{
+        if(ok){ a.style.visibility=b.style.visibility='hidden'; memPairs++; confetti(memGrid, a); }
+        else  { a.classList.remove('flipped'); b.classList.remove('flipped'); }
+        memFirst=null; memLock=false; updateMemInfo();
+      }, 600);
+    }
+    H('g-mem-new').addEventListener('click', newMemory);
+
+    /* -------- Games: Word Rain -------- */
+    const stage=H('g-rain-stage'), rainInput=H('g-rain-input'), sScore=H('g-rain-score'), sLife=H('g-rain-life');
+    let rainTimer=null, score=0, lives=3, drops=[];
+    function startRain(){
+      if(!DICT) return;
+      clearInterval(rainTimer); stage.innerHTML=''; drops=[]; score=0; lives=3; updateHUD();
+      rainInput.value=''; rainInput.focus();
+      rainTimer=setInterval(spawnDrop, 1200);
+      const fall=setInterval(()=>{ drops.forEach(d=>tickDrop(d)); prune(); if(lives<=0){clearInterval(fall); clearInterval(rainTimer); stage.insertAdjacentHTML('beforeend','<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:28px;color:#0b1230;background:rgba(255,255,255,.7);backdrop-filter:blur(2px);border-radius:16px;">Game Over</div>'); } }, 50);
+    }
+    function updateHUD(){ sScore.textContent='Score: '+score; sLife.textContent='Lives: '+lives; }
+    function pickWord(){
+      const keys=Object.keys(DICT).filter(k=>/^[a-z]/.test(k)&&typeof DICT[k]==='string'&&k.split(' ').length<=2);
+      return keys[Math.floor(Math.random()*keys.length)];
+    }
+    function spawnDrop(){
+      const en=pickWord(), kom=DICT[en];
+      const x=20+Math.random()*(stage.clientWidth-40);
+      const el=document.createElement('div'); el.className='drop'; el.style.left=x+'px'; el.textContent=en;
+      stage.appendChild(el);
+      drops.push({el,en,kom,y:-36,speed:1.2+Math.random()*1.6});
+    }
+    function tickDrop(d){ d.y+=d.speed; d.el.style.top=d.y+'px'; if(d.y>stage.clientHeight-20){ // miss
+        lives--; stage.removeChild(d.el); d.dead=true; updateHUD(); if(lives>0) shake(stage);
+      }}
+    function prune(){ drops=drops.filter(d=>!d.dead); }
+    function shake(n){ n.style.transition='transform .1s'; n.style.transform='translateX(4px)'; setTimeout(()=>{n.style.transform='';},100); }
+    rainInput.addEventListener('keydown', e=>{
+      if(e.key==='Enter'){ const val=norm(rainInput.value); if(!val) return;
+        const hit=drops.find(d=>norm(d.kom)===val); if(hit){
+          hit.dead=true; try{stage.removeChild(hit.el);}catch{}
+          score+=10; confetti(stage, hit.el); updateHUD();
+        }
+        rainInput.value='';
+      }
+    });
+    function confetti(container, refEl){
+      const rect=(refEl&&refEl.getBoundingClientRect?refEl.getBoundingClientRect():container.getBoundingClientRect());
+      for(let i=0;i<16;i++){
+        const c=document.createElement('div'); c.className='confetti';
+        c.style.left=(rect.left + rect.width/2 - container.getBoundingClientRect().left)+'px';
+        c.style.top=(rect.top + 10 - container.getBoundingClientRect().top)+'px';
+        c.style.background=['#16a34a','#0ea5e9','#ffd166','#ef4444'][i%4];
+        container.appendChild(c);
+        const dx=(Math.random()*2-1)*120, dy=120+Math.random()*60, rot=(Math.random()*360)+'deg';
+        c.animate([{transform:'translate(0,0) rotate(0)'},{transform:`translate(${dx}px, ${dy}px) rotate(${rot})`,opacity:0}],{duration:900+Math.random()*400,fill:'forwards'});
+        setTimeout(()=>c.remove(),1300);
+      }
+    }
+    H('g-rain-start').addEventListener('click', startRain);
+
+    /* boot */
     loadAll();
   </script>
 </body></html>
+
