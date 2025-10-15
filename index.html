@@ -1,28 +1,22 @@
 
 <!doctype html>
-<html lang="ru">
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Komi Widgets Demo</title>
-<body style="font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial">
-  <h1>Коми-виджеты (демо для Tilda)</h1>
+<html lang="ru"><meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1"/>
+<title>Komi Widgets v2</title>
+<body style="font-family:ui-sans-serif,system-ui,Segoe UI,Roboto,Arial;padding:16px">
+  <h1>Коми-виджеты v2</h1>
   <div id="translator" style="margin:12px 0"></div>
-  <div id="ime" style="margin:12px 0"></div>
   <div id="alphabet" style="margin:12px 0"></div>
   <div id="quiz" style="margin:12px 0"></div>
   <div id="assistant" style="margin:12px 0"></div>
   <script src="./widgets/komi-tts.js"></script>
   <script src="./widgets/komi-translate.js"></script>
-  <script src="./widgets/komi-ime.js"></script>
   <script src="./widgets/komi-alphabet.js"></script>
   <script src="./widgets/komi-quiz.js"></script>
   <script src="./widgets/komi-assistant.js"></script>
   <script>
-    KomiTranslator.mount('#translator', { dataBaseUrl: './data/' });
-    KomiIME.mount('#ime');
-    KomiAlphabet.mount('#alphabet', { dataBaseUrl: './data/' });
-    KomiQuiz.mount('#quiz', { dataBaseUrl: './data/' });
-    KomiAssistant.mount('#assistant');
+    KomiTranslator.mount('#translator', { dataBaseUrl:'./data/', widgetsBaseUrl:'./widgets/', audioBaseUrl:'./audio/' });
+    KomiAlphabet.mount('#alphabet', { dataBaseUrl:'./data/', widgetsBaseUrl:'./widgets/' });
+    KomiQuiz.mount('#quiz', { dataBaseUrl:'./data/', widgetsBaseUrl:'./widgets/' });
+    KomiAssistant.mount('#assistant', { audioBaseUrl:'./audio/' });
   </script>
-</body>
-</html>
+</body></html>

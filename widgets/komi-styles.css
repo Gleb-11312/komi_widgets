@@ -1,0 +1,24 @@
+
+/* Minimal nice card UI for Tilda embeds */
+.komi-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 16px;
+  padding: 16px;
+  background: linear-gradient(180deg, #ffffff, #fafafa);
+  box-shadow: 0 4px 12px rgba(0,0,0,.06);
+}
+.komi-btn {
+  padding: .6rem .9rem;
+  border-radius: 12px;
+  border: 1px solid #d1d5db;
+  cursor: pointer;
+  transition: transform .06s ease, box-shadow .2s ease;
+  background: #fff;
+}
+.komi-btn:active { transform: translateY(1px); }
+.komi-row { display:flex; gap:.6rem; flex-wrap:wrap; align-items:center }
+.komi-muted { opacity:.65 }
+.komi-result {
+  min-height:2.4rem; padding:.7rem; border-radius:12px;
+  border:1px dashed #cbd5e1; background:#f8fafc;
+}

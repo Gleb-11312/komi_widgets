@@ -1,7 +1,8 @@
 {
   "maxChars": 200,
-  "unknownHint": "Попробуйте более простую фразу и короче слова.",
+  "unknownHint": "Попробуйте короче и проще. Нажмите на незнакомое слово — чтобы добавить перевод позже.",
   "joiner": " ",
   "lowercase": true,
-  "stripPunctuation": true
+  "stripPunctuation": true,
+  "maxNgram": 3
 }
