@@ -1,33 +1,22 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<html lang="en"><head>
+  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
   <title>Komi widgets — Translator & Assistant</title>
   <style>
     :root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-      background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh}
-    .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
-    .brand{font-size:28px;margin:0 0 12px;font-weight:900}
-    .brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem}
-    .tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
+    background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh} .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
+    .brand{font-size:28px;margin:0 0 12px;font-weight:900}.brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem}.tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
     .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
     .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
-    .title{font-size:20px;font-weight:800;margin-bottom:2px}
-    .sub{color:var(--muted);font-size:14px;margin-bottom:10px}
-    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}
-    .btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+    .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
+    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
     .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .btn[disabled]{opacity:.6;cursor:not-allowed}
     .txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
     .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
     .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
-    .hint{font-size:12px;color:var(--muted)}
-    .hidden{display:none}
+    .hint{font-size:12px;color:var(--muted)} .hidden{display:none}
     .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
     .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
   </style>
@@ -66,11 +55,10 @@
     </div>
   </div>
 
-  <!-- (необязательно) мини-модель — участвует в оценке при ?ml=1 -->
+  <!-- мини-модель (необязательно). Если файла нет — всё работает по-старому -->
   <script src="./widgets/mini-lm.js"></script>
 
   <script>
-    /* ---------- Tabs ---------- */
     const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
       document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
@@ -79,62 +67,44 @@
       tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
     }));
 
-    /* ---------- Utils ---------- */
-    const H=id=>document.getElementById(id);
     const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
     const toks = s => norm(s).split(' ').filter(Boolean);
-
     function mapLongest(tokens, dict, n=4){
       const out=[], unk=[]; let i=0;
       while(i<tokens.length){
         let hit=null,k=0;
         for(let m=Math.min(n,tokens.length-i); m>=1; m--){
           const p=tokens.slice(i,i+m).join(' ');
-          if (dict[p]!==undefined){ hit=dict[p]; k=m; break; }
+          if(dict[p]!==undefined){hit=dict[p];k=m;break;}
         }
-        if (hit!==null){ out.push(hit); i+=k; }
-        else { out.push({__u:tokens[i]}); unk.push(tokens[i]); i++; }
-      }
-      return {out,unk};
+        if(hit!==null){out.push(hit);i+=k;} else {out.push({__u:tokens[i]});unk.push(tokens[i]);i++;}
+      } return {out,unk};
     }
-
     const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
     const cmap={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
     function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
     function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
-
-    /* ---------- Dictionary loading (base + overlays) ---------- */
+    const H=id=>document.getElementById(id);
     let DICT=null;
 
     async function loadAll(){
       const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
       let dict = {...base};
-
-      // overlay_1..overlay_5 (как раньше)
-      for (let i=1;i<=5;i++){
+      // overlays overlay_1..overlay_5 — как было
+      for(let i=1;i<=5;i++){
         try{
-          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'});
-          if (ov.ok) dict = {...dict, ...(await ov.json())};
+          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
+          dict = {...dict, ...ov};
         }catch(e){}
       }
+      // ничего больше НЕ меняю — оверлеи уже подключаются
 
-      // ЯВНО подключаем глагольные оверлеи (если есть)
-      try{
-        const v1 = await fetch('./data/overlays/overlay_verbs_1.json',{cache:'no-store'});
-        if (v1.ok) dict = {...dict, ...(await v1.json())};
-      }catch(e){}
-      try{
-        const v2 = await fetch('./data/overlays/overlay_verbs_2.json',{cache:'no-store'});
-        if (v2.ok) dict = {...dict, ...(await v2.json())};
-      }catch(e){}
-
-      // Авто-формы (простое расширение)
+      // простые словообразовательные формы
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
       const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
       verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
-
       const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
       const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
@@ -143,7 +113,6 @@
       H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
     }
 
-    /* ---------- Translator ---------- */
     function translate(){
       if(!DICT){H('hint').textContent='dictionary not found';return;}
       const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
@@ -153,7 +122,7 @@
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
-    /* ---------- Assistant ---------- */
+    // Assistant
     function toKomi(text){
       const {out} = mapLongest(toks(text), DICT||{}, 4);
       return finalize(out);
@@ -169,60 +138,59 @@
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
 
+    // Левенштейн
     function dist(a,b){
       a=a.toLowerCase(); b=b.toLowerCase();
       const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
-      for(let i=1;i<=a.length;i++){
-        for(let j=1;j<=b.length;j++){
-          m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));
-        }
-      }
-      return m[a.length][b.length];
+      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){
+        m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));
+      }} return m[a.length][b.length];
     }
+
+    // Итоговый скор: базовый + опциональная мини-модель при ?ml=1
     function scoreRef(rec, ref){
       const d=dist(rec,ref); const max=Math.max(ref.length,1);
-      const base=Math.round(100*(1-d/max));
-      // Если есть мини-модель и включён ?ml=1 — добавим смешанную оценку
+      const base=Math.max(0,Math.min(100, Math.round(100*(1-d/max))));
       try{
-        const params=new URLSearchParams(location.search);
-        if (window.MiniLM && params.get('ml')==='1'){
-          const lmScore = window.MiniLM.score(ref); // 0..100
+        const useML = new URLSearchParams(location.search).get('ml')==='1';
+        if (useML && window.MiniLM && typeof window.MiniLM.score==='function'){
+          const lmScore = Math.max(0,Math.min(100, Number(window.MiniLM.score(ref))||0));
           return Math.round(0.7*base + 0.3*lmScore);
         }
       }catch(_){}
-      return Math.max(0,Math.min(100,base));
+      return base;
     }
 
     document.getElementById('as-say').addEventListener('click', ()=>{
-      const en=(H('as-text').value||'').trim(); if(!en) return;
+      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
       const kom = toKomi(en);
       speakKomi(kom);
       status('Repeat in Komi: "'+kom+'"');
     });
 
     document.getElementById('as-record').addEventListener('click', ()=>{
-      const en=(H('as-text').value||'').trim(); if(!en) return;
+      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
       const target = toKomi(en);
       const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
       if(!SR){ status('speech recognition not supported'); return; }
       const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
-      status('listening…'); setScore(0); H('as-hint').textContent='';
+      status('listening…'); setScore(0);
       rec.onresult=(e)=>{
         const heard=e.results[0][0].transcript||'';
         const s=scoreRef(heard,target);
         setScore(s);
         status('score: '+s+' / 100');
-        H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';
+        document.getElementById('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';
       };
       rec.onerror =(e)=>{ status('mic error'); console.error(e); };
-      rec.onend   =()=>{ if(H('as-status').textContent==='listening…') status('idle'); };
+      rec.onend   =()=>{ if(document.getElementById('as-status').textContent==='listening…') status('idle'); };
       rec.start();
     });
 
     loadAll();
   </script>
-</body>
-</html>
+</body></html>
+
 
 
 
