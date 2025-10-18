@@ -97,8 +97,6 @@
           dict = {...dict, ...ov};
         }catch(e){}
       }
-      // ничего больше НЕ меняю — оверлеи уже подключаются
-
       // простые словообразовательные формы
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
@@ -110,6 +108,15 @@
       nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
 
       DICT = dict;
+
+      // Инициализация MiniLM (если включена и есть файл)
+      try{
+        const useML = new URLSearchParams(location.search).get('ml') === '1';
+        if (useML && window.MiniLM && typeof window.MiniLM.init === 'function'){
+          window.MiniLM.init(DICT);
+        }
+      }catch(_){}
+
       H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
     }
 
@@ -138,27 +145,59 @@
       speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
 
-    // Левенштейн
-    function dist(a,b){
-      a=a.toLowerCase(); b=b.toLowerCase();
-      const m=[]; for(let i=0;i<=a.length;i++){m[i]=[i]} for(let j=1;j<=b.length;j++) m[0][j]=j;
-      for(let i=1;i<=a.length;i++){ for(let j=1;j<=b.length;j++){
-        m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]==b[j-1]?0:1));
-      }} return m[a.length][b.length];
+    /* ---------- мягкая нормализация + расстояние ---------- */
+    function normForASR(s){
+      return String(s||'')
+        .toLowerCase()
+        .replace(/ё/g,'е')
+        .replace(/ӧ/g,'о')
+        .replace(/й/g,'и')
+        .replace(/[’'`]/g,'')       // убираем апострофы
+        .replace(/[^a-zа-я\- ]/g,'')// очищаем лишнее
+        .replace(/\s+/g,' ')
+        .trim();
+    }
+    function levenshtein(a,b){
+      const m=[]; for(let i=0;i<=a.length;i++) m[i]=[i];
+      for(let j=1;j<=b.length;j++) m[0][j]=j;
+      for(let i=1;i<=a.length;i++){
+        for(let j=1;j<=b.length;j++){
+          m[i][j]=Math.min(
+            m[i-1][j]+1,
+            m[i][j-1]+1,
+            m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)
+          );
+        }
+      }
+      return m[a.length][b.length];
     }
 
-    // Итоговый скор: базовый + опциональная мини-модель при ?ml=1
+    // Итоговый скор: мягкий Левенштейн + опционально MiniLM при ?ml=1 + небольшой бонус
     function scoreRef(rec, ref){
-      const d=dist(rec,ref); const max=Math.max(ref.length,1);
-      const base=Math.max(0,Math.min(100, Math.round(100*(1-d/max))));
+      const heard = normForASR(rec);
+      const target = normForASR(ref);
+
+      const dRaw = levenshtein(heard, target);
+      const forgiveness = Math.floor(target.length / 6); // «прощаем» 1 ошибку на 6 символов
+      const dEff = Math.max(0, dRaw - forgiveness);
+
+      const base = Math.max(0, Math.min(100,
+        Math.round(100 * (1 - dEff / Math.max(1, target.length)))
+      ));
+
+      let final = base;
+
       try{
-        const useML = new URLSearchParams(location.search).get('ml')==='1';
-        if (useML && window.MiniLM && typeof window.MiniLM.score==='function'){
-          const lmScore = Math.max(0,Math.min(100, Number(window.MiniLM.score(ref))||0));
-          return Math.round(0.7*base + 0.3*lmScore);
+        const useML = new URLSearchParams(location.search).get('ml') === '1';
+        if (useML && window.MiniLM && typeof window.MiniLM.score === 'function'){
+          // твоя ML принимает (heard, target)
+          const ml = Math.max(0, Math.min(100, Number(window.MiniLM.score(heard, target)) || 0));
+          final = Math.round(0.6 * base + 0.4 * ml);
         }
       }catch(_){}
-      return base;
+
+      final = Math.max(0, Math.min(100, final + 5)); // небольшой бонус
+      return final;
     }
 
     document.getElementById('as-say').addEventListener('click', ()=>{
@@ -189,7 +228,9 @@
 
     loadAll();
   </script>
-</body></html>
+</body>
+</html>
+
 
 
 
