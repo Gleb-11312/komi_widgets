@@ -55,6 +55,9 @@
     </div>
   </div>
 
+  <!-- ML: мини-модель (подключена, но активна только при ?ml=1) -->
+  <script src="./widgets/mini-lm.js"></script>
+
   <script>
     const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
@@ -87,23 +90,38 @@
     async function loadAll(){
       const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
       let dict = {...base};
-      // auto-load overlays overlay_1..overlay_5.json if present
-      for(let i=1;i<=5;i++){
+
+      // расширенная автоподгрузка оверлеев: overlay_1..overlay_9 + overlay_verbs_1/2
+      for(let i=1;i<=9;i++){
         try{
-          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
-          dict = {...dict, ...ov};
-        }catch(e){/* overlay may be missing, skip */}
+          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'});
+          if (ov.ok) Object.assign(dict, await ov.json());
+        }catch(e){}
       }
-      // expand forms
+      for(const name of ['overlay_verbs_1.json','overlay_verbs_2.json']){
+        try{
+          const ov = await fetch(`./data/overlays/${name}`,{cache:'no-store'});
+          if (ov.ok) Object.assign(dict, await ov.json());
+        }catch(e){}
+      }
+
+      // expand forms (глаголы/существительные)
       const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
       const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
       const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
       verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
+
       const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
       const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
       nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
+
       DICT = dict;
+
+      // ML: включаем мини-модель только по флажку ?ml=1
+      const ENABLE_ML = new URLSearchParams(location.search).has('ml');
+      try { if (ENABLE_ML && window.MiniLM) window.MiniLM.init(DICT); } catch(e) {}
+
       H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
     }
 
@@ -152,7 +170,23 @@
       if(!SR){ status('speech recognition not supported'); return; }
       const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
       status('listening…'); setScore(0);
-      rec.onresult=(e)=>{ const heard=e.results[0][0].transcript||''; const s=scoreRef(heard,target); setScore(s); status('score: '+s+' / 100'); H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"'; };
+      rec.onresult=(e)=>{
+        const heard=e.results[0][0].transcript||'';
+
+        // базовая оценка
+        let s = scoreRef(heard, target);
+        // ML: если включено ?ml=1 и мини-модель готова — используем комбинированную
+        try{
+          const ENABLE_ML = new URLSearchParams(location.search).has('ml');
+          if (ENABLE_ML && window.MiniLM && window.MiniLM.ready) {
+            s = window.MiniLM.score(heard, target);
+          }
+        }catch(e){}
+
+        setScore(s);
+        status('score: '+s+' / 100');
+        H('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';
+      };
       rec.onerror =(e)=>{ status('mic error'); console.error(e); };
       rec.onend   =()=>{ if(document.getElementById('as-status').textContent==='listening…') status('idle'); };
       rec.start();
@@ -161,3 +195,4 @@
     loadAll();
   </script>
 </body></html>
+
