@@ -1,6 +1,6 @@
 // widgets/mini-lm.js
-// Мини "on-device" языковая модель (bigram) + комбинированная оценка.
-// Безопасное подключение: если файла нет или флажок ?ml=1 не задан — сайт работает как раньше.
+// Мини "on-device" модель (bigram) + комбинированная оценка.
+// Активируется только при ?ml=1. Если файла нет — всё работает как раньше.
 
 (function (g) {
   const MiniLM = {};
@@ -21,8 +21,8 @@
     const chars = new Set([START, STOP, ...KOMI_CHARS.split("")]);
     const idx = [...chars].reduce((m, c, i) => ((m[c] = i), m), {});
     const N = chars.size;
-
     const mat = Array.from({ length: N }, () => Array(N).fill(1)); // add-1 smoothing
+
     for (const t of allTargets) {
       const s = normalizeKomi(t);
       if (!s) continue;
@@ -42,7 +42,7 @@
   }
 
   function lmScore(textKomi) {
-    if (!LM) return 50;
+    if (!LM) return 50; // нейтрально
     const s = normalizeKomi(textKomi);
     if (!s) return 0;
     const { idx, logp, START, STOP } = LM;
@@ -81,8 +81,7 @@
 
   MiniLM.init = function (dict) {
     try {
-      const allTargets = Object.values(dict)
-        .filter((v) => typeof v === "string");
+      const allTargets = Object.values(dict).filter((v) => typeof v === "string");
       buildLM(allTargets);
       MiniLM.ready = true;
       console.log("[MiniLM] ready with", allTargets.length, "samples");
