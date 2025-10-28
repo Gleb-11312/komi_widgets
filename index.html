@@ -1,233 +1,266 @@
 <!doctype html>
-<html lang="en"><head>
-  <meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Komi widgets — Translator & Assistant</title>
-  <style>
-    :root{--bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;--muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)}
-    *{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;color:var(--ink);
-    background:linear-gradient(180deg,var(--bg1),var(--bg2));min-height:100vh} .wrap{max-width:980px;margin:0 auto;padding:28px 16px}
-    .brand{font-size:28px;margin:0 0 12px;font-weight:900}.brand .v{font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:6px;background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
-    .tabs{display:flex;gap:.5rem;margin:.25rem 0 1rem}.tab-btn{padding:.58rem 1.05rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
-    .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:22px;box-shadow:0 16px 40px var(--shadow)}
-    .title{font-size:20px;font-weight:800;margin-bottom:2px}.sub{color:var(--muted);font-size:14px;margin-bottom:10px}
-    .row{display:flex;gap:.6rem;flex-wrap:wrap;align-items:center}.btn{padding:.64rem 1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
-    .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
-    .txt{width:100%;padding:.8rem;border-radius:14px;border:1px solid var(--border)}
-    .out{min-height:52px;margin-top:10px;padding:12px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:18px}
-    .badge{display:inline-block;padding:.2rem .6rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
-    .hint{font-size:12px;color:var(--muted)} .hidden{display:none}
-    .meter{height:10px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:6px}
-    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
-  </style>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width,initial-scale=1"/>
+    <title>Komi widgets — Translator & Assistant</title>
+    <style>
+        :root{
+            --bg1:#e9f4ff;--bg2:#f7fbff;--card:#fff;--border:#dbe7f4;--ink:#0b1230;
+            --muted:#6b7280;--accent:#16a34a;--accent2:#0ea5e9;--shadow:rgba(13,38,76,.12)
+        }
+        *{box-sizing:border-box}
+        body{
+            margin:0;
+            font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
+            color:var(--ink);
+            background:linear-gradient(180deg,var(--bg1),var(--bg2));
+            min-height:100vh;
+        }
+        .wrap{max-width:1200px;margin:0 auto;padding:32px 18px;font-size:18px;line-height:1.45}
+        .brand{font-size:34px;margin:0 0 16px;font-weight:900}
+        .brand .v{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px;margin-left:8px;
+            background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff}
+        .tabs{display:flex;gap:.5rem;margin:.5rem 0 1.2rem}
+        .tab-btn{padding:.7rem 1.2rem;border:1px solid var(--border);border-radius:999px;background:#fff;cursor:pointer}
+        .tab-btn.active{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+        .card{background:var(--card);border:1px solid var(--border);border-radius:22px;padding:26px;box-shadow:0 16px 40px var(--shadow)}
+        .title{font-size:24px;font-weight:800;margin-bottom:4px}
+        .sub{color:var(--muted);font-size:15px;margin-bottom:12px}
+        .row{display:flex;gap:.7rem;flex-wrap:wrap;align-items:center}
+        .btn{padding:.75rem 1.1rem;border-radius:12px;border:1px solid var(--border);background:#fff;cursor:pointer}
+        .btn.primary{background:linear-gradient(90deg,var(--accent),var(--accent2));color:#fff;border:none}
+        .txt{width:100%;padding:1rem;border-radius:14px;border:1px solid var(--border);font-size:18px}
+        .out{min-height:70px;margin-top:12px;padding:14px;border-radius:14px;border:1px dashed #c7d5e6;background:#f3f8ff;font-size:20px}
+        .badge{display:inline-block;padding:.25rem .65rem;border-radius:999px;background:#eef6ff;border:1px solid #d9e8f7;color:#194b7c;font-weight:600}
+        .hint{font-size:13px;color:var(--muted)}
+        .hidden{display:none}
+        .meter{height:12px;background:#eef6ff;border:1px solid var(--border);border-radius:999px;overflow:hidden;margin-top:8px}
+        .bar{height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .35s ease}
+
+        
+        .guide-line{
+            color:var(--muted);
+            font-size:15px;
+            margin:-2px 0 12px 0;   
+        }
+        .guide-line a{color:#0f5bd7;text-decoration:underline}
+    </style>
 </head>
 <body>
-  <div class="wrap">
+<div class="wrap">
     <h1 class="brand">Komi widgets <span class="v">Translator & Assistant</span></h1>
 
     <div class="tabs">
-      <button class="tab-btn active" data-tab="tr">Translator</button>
-      <button class="tab-btn" data-tab="as">Assistant</button>
+        <button class="tab-btn active" data-tab="tr">Translator</button>
+        <button class="tab-btn" data-tab="as">Assistant</button>
     </div>
 
+    
     <div id="tab-tr" class="card">
-      <div class="title">English → Komi Translator (beta)</div>
-      <div class="sub">Type a word or a short phrase in English. This translator returns Komi text.</div>
-      <textarea id="src" class="txt" rows="3" placeholder="Type here..."></textarea>
-      <div class="row" style="margin-top:.6rem">
-        <button id="do" class="btn primary">Translate</button>
-        <span id="hint" class="badge">loading…</span>
-      </div>
-      <div id="out" class="out"></div>
+        <div class="title">English to Komi Translator</div>
+        <div class="sub">Type a short English phrase. We’ll translate using a dictionary and safe transliteration.</div>
+        <div class="guide-line">
+            Steps: 1) Type a phrase (e.g. <a href="#" id="fill-gm-1">“Good morning”</a>), 2) click <b>Translate</b>, 3) see the result below.
+        </div>
+
+        <textarea id="src" class="txt" rows="4" placeholder='Try: “Good morning”'></textarea>
+        <div class="row" style="margin-top:.7rem">
+            <button id="do" class="btn primary">Translate</button>
+            <span id="hint" class="badge">Loading the dictionary…</span>
+        </div>
+        <div id="out" class="out"></div>
     </div>
 
+    
     <div id="tab-as" class="card hidden">
-      <div class="title">Assistant (Speak Komi)</div>
-      <div class="sub">Enter an English word/phrase — we translate to Komi, play it in Komi, then you repeat and get a score.</div>
-      <input id="as-text" class="txt" placeholder="Type an English word… e.g. hello" />
-      <div class="row" style="margin-top:.6rem">
-        <button id="as-say" class="btn">Play Komi</button>
-        <button id="as-record" class="btn primary">Record & Check (ru-RU)</button>
-        <span id="as-status" class="badge">idle</span>
-      </div>
-      <div class="meter"><div id="as-bar" class="bar"></div></div>
-      <div class="hint" id="as-hint"></div>
+        <div class="title">Assistant (Speak Komi)</div>
+        <div class="sub">We translate your English phrase to Komi, play it, then you repeat — and get a score.</div>
+        <div class="guide-line">
+            Steps: 1) Enter a phrase (e.g. <a href="#" id="fill-gm-2">“Good morning”</a>), 2) click <b>Play Komi</b>, 3) click <b>Record & Check</b> and speak. Allow the microphone if prompted.
+        </div>
+
+        <input id="as-text" class="txt" placeholder='Try: “Good morning”' />
+        <div class="row" style="margin-top:.7rem">
+            <button id="as-say" class="btn">Play Komi</button>
+            <button id="as-record" class="btn primary">Record & Check (ru-RU)</button>
+            <span id="as-status" class="badge">Ready — click “Play Komi” or “Record & Check”.</span>
+        </div>
+        <div class="meter"><div id="as-bar" class="bar"></div></div>
+        <div class="hint" id="as-hint"></div>
     </div>
-  </div>
+</div>
 
-  <!-- мини-модель (необязательно). Если файла нет — всё работает по-старому -->
-  <script src="./widgets/mini-lm.js"></script>
 
-  <script>
+<script src="./widgets/mini-lm.js"></script>
+
+<script>
+    
     const tabs={tr:document.getElementById('tab-tr'), as:document.getElementById('tab-as')};
     document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>{
-      document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
-      b.classList.add('active');
-      tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
-      tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
+        document.querySelectorAll('.tab-btn').forEach(x=>x.classList.remove('active'));
+        b.classList.add('active');
+        tabs.tr.classList.toggle('hidden', b.dataset.tab!=='tr');
+        tabs.as.classList.toggle('hidden', b.dataset.tab!=='as');
     }));
 
+    
+    const H=id=>document.getElementById(id);
     const norm = s => (s||'').toLowerCase().replace(/[.,!?;:()"“”']/g,' ').replace(/\s+/g,' ').trim();
     const toks = s => norm(s).split(' ').filter(Boolean);
     function mapLongest(tokens, dict, n=4){
-      const out=[], unk=[]; let i=0;
-      while(i<tokens.length){
-        let hit=null,k=0;
-        for(let m=Math.min(n,tokens.length-i); m>=1; m--){
-          const p=tokens.slice(i,i+m).join(' ');
-          if(dict[p]!==undefined){hit=dict[p];k=m;break;}
-        }
-        if(hit!==null){out.push(hit);i+=k;} else {out.push({__u:tokens[i]});unk.push(tokens[i]);i++;}
-      } return {out,unk};
+        const out=[], unk=[]; let i=0;
+        while(i<tokens.length){
+            let hit=null,k=0;
+            for(let m=Math.min(n,tokens.length-i); m>=1; m--){
+                const p=tokens.slice(i,i+m).join(' ');
+                if(dict[p]!==undefined){hit=dict[p];k=m;break;}
+            }
+            if(hit!==null){out.push(hit);i+=k;} else {out.push({__u:tokens[i]});unk.push(tokens[i]);i++;}
+        } return {out,unk};
     }
     const dgs=[["sh","ш"],["ch","ч"],["zh","ж"],["kh","х"],["ts","ц"],["ya","я"],["yu","ю"],["yo","йо"],["ye","е"]];
     const cmap={"a":"а","b":"б","c":"к","d":"д","e":"е","f":"ф","g":"г","h":"х","i":"и","j":"дж","k":"к","l":"л","m":"м","n":"н","o":"о","p":"п","q":"к","r":"р","s":"с","t":"т","u":"у","v":"в","w":"в","x":"кс","y":"ы","z":"з","-":"-","'":"’"," ":" "};
     function translit(en){ let s=en.toLowerCase(); for(const [a,b] of dgs){ s=s.replaceAll(a,b);} let o=""; for(const ch of s){ o+=cmap[ch]??ch;} return o; }
     function finalize(ch){ const p=[]; for(const c of ch){ if(typeof c==='string') p.push(c); else if(c&&c.__u) p.push(translit(c.__u)); } return p.join(' ').replace(/\s+/g,' ').trim(); }
-    const H=id=>document.getElementById(id);
+
+    
     let DICT=null;
-
     async function loadAll(){
-      const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
-      let dict = {...base};
-      // overlays overlay_1..overlay_5 — как было
-      for(let i=1;i<=5;i++){
-        try{
-          const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
-          dict = {...dict, ...ov};
-        }catch(e){}
-      }
-      // простые словообразовательные формы
-      const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
-      const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-      const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
-      const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
-      verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
-      const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
-      const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-      nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
-
-      DICT = dict;
-
-      // Инициализация MiniLM (если включена и есть файл)
-      try{
-        const useML = new URLSearchParams(location.search).get('ml') === '1';
-        if (useML && window.MiniLM && typeof window.MiniLM.init === 'function'){
-          window.MiniLM.init(DICT);
+        const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
+        let dict = {...base};
+        for(let i=1;i<=5;i++){
+            try{
+                const ov = await fetch(`./data/overlays/overlay_${i}.json`,{cache:'no-store'}).then(r=>r.json());
+                dict = {...dict, ...ov};
+            }catch(e){}
         }
-      }catch(_){}
+        const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
+        const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+        const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
+        const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
+        verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
+        const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
+        const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
+        nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
 
-      H('hint').textContent='ready ('+Object.keys(DICT).length+' keys)';
+        DICT = dict;
+
+        
+        try{
+            const forceOff = new URLSearchParams(location.search).get('ml')==='0';
+            if (!forceOff && window.MiniLM && typeof window.MiniLM.init === 'function'){
+                window.MiniLM.init(DICT);
+            }
+        }catch(_){}
+
+        H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
     }
 
+    /* Translator */
     function translate(){
-      if(!DICT){H('hint').textContent='dictionary not found';return;}
-      const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
-      H('out').textContent = finalize(out);
-      H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
+        if(!DICT){H('hint').textContent='Dictionary not found';return;}
+        const {out,unk} = mapLongest(toks(H('src').value), DICT, 4);
+        H('out').textContent = finalize(out);
+        H('hint').textContent = unk.length ? ('Unknown: ' + [...new Set(unk)].join(', ')) : 'OK';
     }
     H('do').addEventListener('click', translate);
     H('src').addEventListener('keydown', e => { if(e.key==='Enter' && (e.ctrlKey||e.metaKey)) translate(); });
 
-    // Assistant
+    
+    const fillGM = () => 'Good morning';
+    H('fill-gm-1').addEventListener('click', e=>{e.preventDefault(); H('src').value = fillGM();});
+    H('fill-gm-2').addEventListener('click', e=>{e.preventDefault(); H('as-text').value = fillGM();});
+
+    
     function toKomi(text){
-      const {out} = mapLongest(toks(text), DICT||{}, 4);
-      return finalize(out);
+        const {out} = mapLongest(toks(text), DICT||{}, 4);
+        return finalize(out);
     }
     const status = t=> H('as-status').textContent=t;
     const setScore = v=> H('as-bar').style.width = Math.max(0, Math.min(100, v)) + '%';
 
     function speakKomi(text){
-      const u=new SpeechSynthesisUtterance(text);
-      u.lang='ru-RU'; u.rate=0.95;
-      const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null;
-      if(pick) u.voice=pick;
-      speechSynthesis.cancel(); speechSynthesis.speak(u);
+        const u=new SpeechSynthesisUtterance(text);
+        u.lang='ru-RU'; u.rate=0.95;
+        const pick = speechSynthesis.getVoices().find(v=>/ru/i.test(v.lang)) || null;
+        if(pick) u.voice=pick;
+        speechSynthesis.cancel(); speechSynthesis.speak(u);
     }
 
-    /* ---------- мягкая нормализация + расстояние ---------- */
     function normForASR(s){
-      return String(s||'')
-        .toLowerCase()
-        .replace(/ё/g,'е')
-        .replace(/ӧ/g,'о')
-        .replace(/й/g,'и')
-        .replace(/[’'`]/g,'')       // убираем апострофы
-        .replace(/[^a-zа-я\- ]/g,'')// очищаем лишнее
-        .replace(/\s+/g,' ')
-        .trim();
+        return String(s||'')
+            .toLowerCase()
+            .replace(/ё/g,'е').replace(/ӧ/g,'о').replace(/й/g,'и')
+            .replace(/[’'`]/g,'')
+            .replace(/[^a-zа-я\- ]/g,'')
+            .replace(/\s+/g,' ')
+            .trim();
     }
     function levenshtein(a,b){
-      const m=[]; for(let i=0;i<=a.length;i++) m[i]=[i];
-      for(let j=1;j<=b.length;j++) m[0][j]=j;
-      for(let i=1;i<=a.length;i++){
-        for(let j=1;j<=b.length;j++){
-          m[i][j]=Math.min(
-            m[i-1][j]+1,
-            m[i][j-1]+1,
-            m[i-1][j-1]+(a[i-1]===b[j-1]?0:1)
-          );
+        const m=[]; for(let i=0;i<=a.length;i++) m[i]=[i];
+        for(let j=1;j<=b.length;j++) m[0][j]=j;
+        for(let i=1;i<=a.length;i++){
+            for(let j=1;j<=b.length;j++){
+                m[i][j]=Math.min(m[i-1][j]+1, m[i][j-1]+1, m[i-1][j-1]+(a[i-1]===b[j-1]?0:1));
+            }
         }
-      }
-      return m[a.length][b.length];
+        return m[a.length][b.length];
     }
-
-    // Итоговый скор: мягкий Левенштейн + опционально MiniLM при ?ml=1 + небольшой бонус
     function scoreRef(rec, ref){
-      const heard = normForASR(rec);
-      const target = normForASR(ref);
-
-      const dRaw = levenshtein(heard, target);
-      const forgiveness = Math.floor(target.length / 6); // «прощаем» 1 ошибку на 6 символов
-      const dEff = Math.max(0, dRaw - forgiveness);
-
-      const base = Math.max(0, Math.min(100,
-        Math.round(100 * (1 - dEff / Math.max(1, target.length)))
-      ));
-
-      let final = base;
-
-      try{
-        const useML = new URLSearchParams(location.search).get('ml') === '1';
-        if (useML && window.MiniLM && typeof window.MiniLM.score === 'function'){
-          // твоя ML принимает (heard, target)
-          const ml = Math.max(0, Math.min(100, Number(window.MiniLM.score(heard, target)) || 0));
-          final = Math.round(0.6 * base + 0.4 * ml);
-        }
-      }catch(_){}
-
-      final = Math.max(0, Math.min(100, final + 5)); // небольшой бонус
-      return final;
+        const heard = normForASR(rec);
+        const target = normForASR(ref);
+        const dRaw = levenshtein(heard, target);
+        const forgiveness = Math.floor(target.length / 6);
+        const dEff = Math.max(0, dRaw - forgiveness);
+        const base = Math.max(0, Math.min(100, Math.round(100 * (1 - dEff / Math.max(1, target.length)))));
+        let final = base;
+        try{
+            const forceOff = new URLSearchParams(location.search).get('ml')==='0';
+            if (!forceOff && window.MiniLM && typeof window.MiniLM.score === 'function'){
+                const ml = Math.max(0, Math.min(100, Number(window.MiniLM.score(heard, target)) || 0));
+                final = Math.round(0.6 * base + 0.4 * ml);
+            }
+        }catch(_){}
+        return Math.max(0, Math.min(100, final + 5));
     }
 
     document.getElementById('as-say').addEventListener('click', ()=>{
-      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
-      const kom = toKomi(en);
-      speakKomi(kom);
-      status('Repeat in Komi: "'+kom+'"');
+        const en=(H('as-text').value||'').trim();
+        if(!en){ status('Please enter a phrase first (e.g., “Good morning”).'); return; }
+        const kom = toKomi(en);
+        speakKomi(kom);
+        status('Listen and repeat: “'+kom+'”');
     });
 
     document.getElementById('as-record').addEventListener('click', ()=>{
-      const en=(document.getElementById('as-text').value||'').trim(); if(!en) return;
-      const target = toKomi(en);
-      const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
-      if(!SR){ status('speech recognition not supported'); return; }
-      const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
-      status('listening…'); setScore(0);
-      rec.onresult=(e)=>{
-        const heard=e.results[0][0].transcript||'';
-        const s=scoreRef(heard,target);
-        setScore(s);
-        status('score: '+s+' / 100');
-        document.getElementById('as-hint').textContent='Target: "'+target+'" | You said: "'+heard+'"';
-      };
-      rec.onerror =(e)=>{ status('mic error'); console.error(e); };
-      rec.onend   =()=>{ if(document.getElementById('as-status').textContent==='listening…') status('idle'); };
-      rec.start();
+        const en=(H('as-text').value||'').trim();
+        if(!en){ status('Please enter a phrase first (e.g., “Good morning”).'); return; }
+        const target = toKomi(en);
+        const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+        if(!SR){ status('Microphone is not supported in this browser. Try Chrome on desktop or Android.'); return; }
+        const rec=new SR(); rec.lang='ru-RU'; rec.interimResults=false; rec.maxAlternatives=1;
+        status('Listening… please speak clearly.'); setScore(0); H('as-hint').textContent='';
+        rec.onresult=(e)=>{
+            const heard=e.results[0][0].transcript||'';
+            const s=scoreRef(heard,target);
+            setScore(s);
+            status('Your score: '+s+' / 100');
+            H('as-hint').textContent='Target: "'+target+'"  |  You said: "'+heard+'"';
+        };
+        rec.onerror =(e)=>{
+            console.error(e);
+            const msg = (e.error==='not-allowed' || e.error==='permission-denied')
+                ? 'Mic access denied. Please allow microphone in browser site settings and try again.'
+                : 'Mic error. Please check your microphone and try again.';
+            status(msg);
+        };
+        rec.onend   =()=>{ if(H('as-status').textContent.startsWith('Listening…')) status('Ready — click “Play Komi” or “Record & Check”.'); };
+        rec.start();
     });
 
     loadAll();
-  </script>
+</script>
 </body>
 </html>
 
