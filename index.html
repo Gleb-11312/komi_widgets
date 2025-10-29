@@ -116,46 +116,34 @@
   let DICT=null;
 
   async function loadAll(){
-    // базовый словарь
-    const base = await fetch('./data/dictionary.json',{cache:'no-store'}).then(r=>r.json());
-    let dict = {...base};
-
-    // ЯВНО подключаем все существующие overlays:
-    const overlayFiles = [
-      'overlay_1.json','overlay_2.json','overlay_3.json','overlay_4.json','overlay_5.json',
-      'overlay_6.json','overlay_7.json',
-      'overlay_verbs_1.json','overlay_verbs_2.json'
-    ];
-    for (const f of overlayFiles) {
-      try {
-        const ov = await fetch(`./data/overlays/${f}`, { cache: 'no-store' }).then(r => r.json());
-        dict = { ...dict, ...ov };
-      } catch (e) {
-        console.warn('overlay not loaded:', f, e);
-      }
-    }
-
-    // Автогенерация некоторых словоформ (оставил как было)
-    const verbs=["eat","drink","go","come","read","write","speak","learn","love","want","know","see","work","sleep","walk","run","help","open","close","travel","call","make","give","get","need","like","use","play","watch","listen","teach","study","arrive","leave"];
-    const third=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-    const past =s=>s.endsWith('e')?s+'d':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ied':s+'ed';
-    const ing  =s=>s.endsWith('e')&&!s.endsWith('ee')?s.slice(0,-1)+'ing':s+'ing';
-    verbs.forEach(v=>{[v,third(v),past(v),ing(v)].forEach(f=>{ if(f) dict[f]=dict[v]||translit(v); }); });
-    const nouns=["friend","city","village","house","school","university","child","boy","girl","man","woman","doctor","shop","market","bank","ticket","hotel","room","student","teacher","book","computer","phone","project","team","player","river","forest","mountain","island","museum","theatre","airport","train","bus","cat","dog","horse","cow","bird","fish"];
-    const plural=s=>/(s|x|z|sh|ch)$/.test(s)?s+'es':/[^aeiou]y$/.test(s)?s.slice(0,-1)+'ies':s+'s';
-    nouns.forEach(n=>{ if(dict[n]) dict[plural(n)] = dict[n]; });
-
-    DICT = dict;
-
-    // Инициализация мини-языковой модели (опционально)
+    const bust = 'v=' + Date.now(); // анти-кэш
     try{
-      const forceOff = new URLSearchParams(location.search).get('ml')==='0';
-      if (!forceOff && window.MiniLM && typeof window.MiniLM.init === 'function'){
-        window.MiniLM.init(DICT);
-      }
-    }catch(_){}
+      // 1) база
+      const base = await fetch(`./data/dictionary.json?${bust}`,{cache:'no-store'}).then(r=>r.json());
+      let dict = {...base};
+      console.log('[dict] base', Object.keys(base).length);
 
-    H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
+      // 2) манифест оверлеев
+      const manifest = await fetch(`./data/overlays/overlay_manifest.json?${bust}`,{cache:'no-store'}).then(r=>r.json());
+      if(!Array.isArray(manifest)) throw new Error('overlay_manifest.json must be an array of filenames');
+
+      // 3) подгружаем все файлы из манифеста
+      for (const file of manifest) {
+        try{
+          const ov = await fetch(`./data/overlays/${file}?${bust}`, {cache:'no-store'}).then(r=>r.json());
+          dict = { ...dict, ...ov };
+          console.log('[dict] +', file, Object.keys(ov).length);
+        }catch(e){
+          console.warn('[dict] overlay NOT loaded:', file, e);
+        }
+      }
+
+      DICT = dict;
+      H('hint').textContent='Ready ('+Object.keys(DICT).length+' keys)';
+    }catch(e){
+      console.error(e);
+      H('hint').textContent='Load error — open console';
+    }
   }
 
   /* Translator */
@@ -263,6 +251,7 @@
 </script>
 </body>
 </html>
+
 
 
 
